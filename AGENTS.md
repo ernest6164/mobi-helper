@@ -220,7 +220,22 @@ winget install --id Git.Git -e --source winget
 * 설치 도중 관리자 권한(UAC) 승인 창이 뜨면 **'예'**를 눌러 진행합니다.
 * 설치가 완료된 후에는 진행 중이던 터미널 창을 완전히 재시작해야 Git 명령어가 시스템에 정상적으로 인식됩니다.
 
-## Appendix 6. 명령어 자동 승인(Allowlist) 설정 방법
+## Appendix 6. GitHub 원격 저장소 연동 및 푸시 방법
+
+로컬에서 작업 및 커밋이 완료된 내역을 GitHub 저장소에 업로드(Push)하려면 터미널에서 다음 명령어들을 차례대로 실행합니다. (단, Git을 설치한 직후 터미널을 껐다 켜지 않았다면 `git` 명령어 대신 `& "C:\Program Files\Git\cmd\git.exe"`라는 전체 경로를 사용해야 합니다.)
+
+1. **원격 저장소 주소 등록 (최초 1회)**:
+```powershell
+git remote add origin https://github.com/사용자명/저장소명.git
+```
+
+2. **저장소로 푸시**:
+```powershell
+git push -u origin main
+```
+* 명령어를 실행하면 화면에 **GitHub 로그인 팝업창(Git Credential Manager)**이 나타납니다. `Sign in with your browser`를 클릭하여 인증을 마치면 파일이 정상적으로 업로드됩니다.
+
+## Appendix 7. 명령어 자동 승인(Allowlist) 설정 방법
 
 Antigravity 환경에서 AI가 CLI 도구나 파이썬 스크립트를 실행할 때 매번 발생하는 승인 대기(Blocking) 과정을 생략하려면, 앱 설정에서 자주 사용하는 명령어 패턴을 자동 승인(Allowlist) 목록에 등록하는 것을 권장합니다.
 
