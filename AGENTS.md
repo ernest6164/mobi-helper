@@ -219,3 +219,19 @@ winget install --id Git.Git -e --source winget
 
 * 설치 도중 관리자 권한(UAC) 승인 창이 뜨면 **'예'**를 눌러 진행합니다.
 * 설치가 완료된 후에는 진행 중이던 터미널 창을 완전히 재시작해야 Git 명령어가 시스템에 정상적으로 인식됩니다.
+
+## Appendix 6. 명령어 자동 승인(Allowlist) 설정 방법
+
+Antigravity 환경에서 AI가 CLI 도구나 파이썬 스크립트를 실행할 때 매번 발생하는 승인 대기(Blocking) 과정을 생략하려면, 앱 설정에서 자주 사용하는 명령어 패턴을 자동 승인(Allowlist) 목록에 등록하는 것을 권장합니다.
+
+1. **설정 창 열기**: Antigravity 앱 좌측 사이드바에서 톱니바퀴 모양의 **Settings**(설정) 탭을 클릭합니다.
+2. **권한 섹션 이동**: 설정 화면에서 **Permission Grants** (권한 부여) 또는 **Command Allowlist** (명령어 허용 목록) 항목을 찾습니다. (전체 적용 시 Global Settings, 현재 프로젝트만 적용 시 Project-Level Settings 확인)
+3. **명령어 패턴 등록**: Allowlist 항목에 아래의 패턴들을 각각 추가합니다.
+   - `C:\Nexon\MabinogiMobile\MabinogiMobile_CLI.exe *`
+   - `MabinogiMobile_CLI *`
+   - `python *`
+   - `$env:PYTHONIOENCODING="utf-8"; python *`
+   - `cat *`
+   - `Get-ChildItem *`
+
+위 패턴들을 허용 목록에 등록해두면, 향후 명령어 실행 중간에 사용자 승인을 기다리지 않고 즉각적으로 처리되어 더욱 매끄러운 자동화가 가능해집니다.
