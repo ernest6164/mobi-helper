@@ -17,10 +17,11 @@
   * 상세 작업 흐름 (저장/동기화 & 재고 보충): [`references/workflow.md`](./references/workflow.md)
   * CLI 가이드 및 API 명세: [`references/cli_guide.md`](./references/cli_guide.md)
   * 데이터 관리 원칙: [`references/data_management.md`](./references/data_management.md)
+  * 전역 상수 및 설정 정의: [`references/constants.md`](./references/constants.md)
   * 데이터 작성 템플릿: [`references/templates.md`](./references/templates.md)
   * 부록 및 특정 환경 가이드: [`references/appendix.md`](./references/appendix.md)
 * **디렉토리 구조 및 관리 원칙**:
-  * 명시적으로 작성을 지시받지 않은 일회성 스크립트 및 임시 문서는 `scratch/` 폴더에 작성합니다.
+  * 명시적으로 작성을 지시받지 않은 일회성 스크립트, 임시 문서 및 **작업 대기열 문서(`scratch/TODO.md`)**는 항상 `scratch/` 폴더에서 작성 및 관리합니다.
   * 시스템 운영으로 파생되는 모든 데이터 문서(캐릭터 정보, 재고 CSV 등)는 `data/` 폴더에 생성 및 관리합니다.
   * `data/`와 `scratch/` 폴더는 `.gitignore`에 등록하여 Git 버전 관리에 포함되지 않도록 합니다.
 * **문서 갱신 일시**: 2026년 10월 4일

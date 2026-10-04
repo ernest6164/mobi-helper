@@ -38,6 +38,7 @@ mobi-helper/
 │   ├── workflow.md          # 1. 정보 저장/확인 및 2. 재고 보충 상세 작업 흐름
 │   ├── cli_guide.md         # CLI 통신 프로토콜, Capabilities 및 UTF-8 Base64 규칙
 │   ├── data_management.md   # 캐릭터 정합성 관리 원칙 및 파일 명명 규칙
+│   ├── constants.md         # 시스템 전역 설정값, 기본값 및 임계치 상수 명세
 │   ├── templates.md         # data/ 생성 파일들의 표준 작성 템플릿
 │   └── appendix.md          # CSV 뷰어, 스크립트 작성 팁, Git 및 특정 에이전트 환경 설정 가이드
 ├── data/                    # 운영 중 생성/관리되는 데이터 (Git 제외)
@@ -61,5 +62,6 @@ mobi-helper/
 * [`references/workflow.md`](./references/workflow.md): 상세 표준 작업 흐름 (저장/확인 & 재고 보충)
 * [`references/cli_guide.md`](./references/cli_guide.md): AI 커넥터 CLI 연동 및 명령어 명세
 * [`references/data_management.md`](./references/data_management.md): 데이터 관리 원칙
+* [`references/constants.md`](./references/constants.md): 시스템 전역 상수 정의
 * [`references/templates.md`](./references/templates.md): 데이터 문서 템플릿
 * [`references/appendix.md`](./references/appendix.md): 부록 및 특정 환경/에이전트 설정 가이드
