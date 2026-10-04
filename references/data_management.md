@@ -70,6 +70,6 @@
 | `recipes.csv` | 수집된 가공/제작 레시피 정보 데이터베이스 | CSV |
 | `chatbot/README.md` | 챗봇 지식 문서 전체 색인(Index) 및 태그 목록 | Markdown |
 | `chatbot/(주제명).md` | 개별 게임 공략 및 가이드 지식 문서 (상단 `#태그` 포함) | Markdown |
-| `scratch/(명령어).json` | CLI 명령어 실행에 대한 응답 결과 임시 저장 파일 | JSON |
+| `response/(명령어).json` | CLI 명령어 실행에 대한 응답 결과 저장 파일 | JSON |
 
 
