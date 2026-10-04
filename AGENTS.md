@@ -8,7 +8,7 @@
 
 * **에이전트 독립성 및 범용성 원칙**:
   * 본 프로젝트는 **특정 AI 에이전트나 전용 툴체인에 의존하지 않으며**, 표준적인 명령 실행 및 파일 입출력이 가능한 모든 AI 에이전트/어시스턴트 환경에서 범용적으로 동작하도록 설계되었습니다.
-  * 단, 특정 에이전트 플랫폼이나 특정 개발 도구/IDE 전용의 부가 기능 및 환경 설정 가이드는 예외적으로 [`references/appendix.md`](./references/appendix.md)에서 분리하여 다룹니다.
+  * 단, 특정 에이전트 플랫폼이나 특정 개발 도구/IDE 전용의 부가 기능 및 환경 설정 가이드는 예외적으로 [`references/appendix/`](./references/appendix/README.md)에서 분리하여 다룹니다.
 * **구체적 경로 및 환경 비종속성 원칙**:
   * 프로젝트 내 공용 문서에는 **특정 머신의 로컬 절대 경로, 특정 사용자 디렉토리 경로, 하드코딩된 실행 경로 등을 명시하지 않습니다.**
   * 도구의 위치는 동적 탐색 또는 `data/environments.json`과 같은 설정 파일을 통해 참조하도록 추상화하여 관리합니다.
@@ -16,13 +16,13 @@
 * **스킬 기반 모듈 아키텍처**:
   * 메인 워크플로우 및 실행 지침: [`SKILL.md`](./SKILL.md)
   * 공용 스크립트 라이브러리 가이드: [`scripts/README.md`](./scripts/README.md)
-  * 상세 작업 흐름 (동기화, 재고 보충, 챗봇 지식): [`references/workflows.md`](./references/workflows.md)
+  * 상세 작업 흐름 (동기화, 재고 보충, 챗봇 지식): [`references/workflows/`](./references/workflows/README.md)
   * CLI 가이드 및 API 명세: [`references/cli_guide.md`](./references/cli_guide.md)
   * 데이터 관리 원칙: [`references/data_management.md`](./references/data_management.md)
   * 환경 설정 정의 및 스키마 명세: [`references/environments.md`](./references/environments.md)
   * 전역 상수 및 설정 정의: [`references/constants.md`](./references/constants.md)
-  * 데이터 작성 템플릿: [`references/templates.md`](./references/templates.md)
-  * 부록 및 특정 환경 가이드: [`references/appendix.md`](./references/appendix.md)
+  * 데이터 작성 템플릿: [`references/templates/`](./references/templates/README.md)
+  * 부록 및 특정 환경 가이드: [`references/appendix/`](./references/appendix/README.md)
 * **디렉토리 구조 및 관리 원칙**:
   * 표준화된 공용 스크립트는 `scripts/` 폴더에서 관리하며 Git 버전 관리에 포함합니다. 각 스크립트는 매개변수화되어 환경에 독립적으로 동작합니다.
   * **생성이 명시된 모든 문서(캐릭터 정보, 재고 CSV, 환경 설정 `data/environments.json`, 시스템 노하우 `data/know-how.md`, 작업 대기열 `data/TODO.md` 등)는 예외 없이 `data/` 폴더에서 생성 및 관리**합니다.

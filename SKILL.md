@@ -75,7 +75,7 @@ description: >-
 
 1. **목표치 점검**:
    * `data/target.md`에서 대상 아이템의 목표치를 확인합니다.
-   * 목표치가 없을 경우 템플릿(`references/templates.md`, 일괄 100개) 사용을 사용자에게 권유합니다.
+   * 목표치가 없을 경우 템플릿([`references/templates/target.md`](./references/templates/target.md), 일괄 100개) 사용을 사용자에게 권유합니다.
    * 사용자가 템플릿 사용을 수락하면 그대로 적용하고, 거절 시 구체적인 목표 수량 입력을 요구합니다.
 2. **기준 캐릭터 재고 파악**: 현재 접속 중인 캐릭터의 인벤토리 및 금고 재고를 확인합니다.
 3. **타 캐릭터 재고 확인**: 부족분 발생 시 다른 캐릭터의 CSV 데이터(`data/characters/` 하위)를 확인합니다.
@@ -119,11 +119,11 @@ description: >-
 세부 명세, 워크플로우 다이어그램 및 템플릿 양식은 아래 문서를 참조합니다.
 
 * **공용 스크립트 라이브러리 가이드**: [scripts/README.md](./scripts/README.md)
-* **표준 작업 흐름(상세 플로우차트 및 절차)**: [references/workflows.md](./references/workflows.md)
+* **표준 작업 흐름(상세 플로우차트 및 절차)**: [references/workflows/](./references/workflows/README.md)
 * **CLI 전체 명령어 및 인코딩 가이드**: [references/cli_guide.md](./references/cli_guide.md)
 * **데이터 관리 원칙 및 명명 규칙**: [references/data_management.md](./references/data_management.md)
 * **환경 설정 정의 및 스키마 명세**: [references/environments.md](./references/environments.md)
 * **시스템 전역 상수 정의**: [references/constants.md](./references/constants.md)
-* **데이터 표준 포맷 및 작성 템플릿**: [references/templates.md](./references/templates.md)
-* **부록 및 환경/도구 팁**: [references/appendix.md](./references/appendix.md)
+* **데이터 표준 포맷 및 작성 템플릿**: [references/templates/](./references/templates/README.md)
+* **부록 및 환경/도구 팁**: [references/appendix/](./references/appendix/README.md)
 
