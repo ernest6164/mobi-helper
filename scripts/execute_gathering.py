@@ -64,6 +64,11 @@ def run_cli_cmd(cli_path, cmd, body=None):
         b64 = base64.b64encode(payload).decode("ascii")
         args.append(f"base64:{b64}")
     res = subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
+    if res.stdout and res.stdout.strip():
+        try:
+            return json.loads(res.stdout)
+        except Exception:
+            pass
     resp_path = os.path.expandvars(r"%LOCALAPPDATA%\MabinogiMobileCLI\last-response.json")
     if os.path.exists(resp_path):
         try:
@@ -71,10 +76,7 @@ def run_cli_cmd(cli_path, cmd, body=None):
                 return json.load(f)
         except Exception:
             pass
-    try:
-        return json.loads(res.stdout)
-    except Exception:
-        return {}
+    return {}
 
 
 def get_current_items(cli_path):
