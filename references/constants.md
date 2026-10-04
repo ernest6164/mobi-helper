@@ -10,9 +10,9 @@
 
 | 상수명 | 기본값 / 설정값 | 설명 |
 | :--- | :---: | :--- |
-| `DEFAULT_TARGET_STOCK_QUANTITY` | `100` | 재고 목표치(`target.md`)가 없을 때 사용자에게 권유하는 기본 목표 수량 (템플릿 기본값) |
+| `DEFAULT_TARGET_STOCK_QUANTITY` | `100` | 재고 목표치(`target_gathering.md`)가 없을 때 사용자에게 권유하는 기본 목표 수량 (템플릿 기본값) |
 | `OTHER_CHAR_STOCK_THRESHOLD` | `10` | 타 캐릭터 재고 보유 판정 임계치. 타 캐릭터가 해당 아이템을 **10개 이상** 보유 시 채집을 보류하며, **10개 미만**일 경우 실질 재고로 인정하지 않고 채집 대상에 포함 |
-| `TARGET_PRIORITY_RULE` | `BOTTOM_UP` | `target.md` 목록의 **아래쪽에 위치한 항목일수록 높은 우선순위**를 부여하는 채집 순서 규칙 |
+| `TARGET_PRIORITY_RULE` | `BOTTOM_UP` | 목표치(`target_*.md`) 목록의 **아래쪽에 위치한 항목일수록 높은 우선순위**를 부여하는 순서 규칙 |
 
 ---
 

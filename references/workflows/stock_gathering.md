@@ -1,8 +1,8 @@
-# 제2절: 재고 보충 작업 흐름 (Stock Replenishment & Gathering Workflow)
+# 제2절: 채집물 재고 보충 작업 흐름 (Gathering Stock Replenishment Workflow)
 
 * **갱신 일시**: 2026년 10월 5일
 
-사용자가 `"재고 보충해줘"`, `"재료 채워줘"`, `"부족한거 채집해줘"`, `"나무 진액 목표치까지 모아줘"` 등의 명령을 내렸을 때 수행합니다. 세부 설정값 및 규칙은 [`references/constants.md`](../constants.md)를 준수합니다.
+사용자가 `"재고 보충해줘"`, `"채집물 보충해줘"`, `"부족한 재료 채집해줘"`, `"나무 진액 목표치까지 모아줘"` 등의 명령을 내렸을 때 수행합니다. 세부 설정값 및 규칙은 [`references/constants.md`](../constants.md)를 준수합니다.
 
 ---
 
@@ -10,18 +10,18 @@
 
 ```mermaid
 flowchart TD
-    Start["1. 재고 보충 명령 수신"] --> CheckConn["2. CLI 연결 확인 (status)"]
-    CheckConn --> CheckTarget{"3. 목표치 점검 (target.md)"}
+    Start["1. 채집물 재고 보충 명령 수신"] --> CheckConn["2. CLI 연결 확인 (status)"]
+    CheckConn --> CheckTarget{"3. 목표치 점검 (target_gathering.md)"}
     CheckTarget -- "목표치 존재" --> CurrentStock["4. 현재 캐릭터 재고 파악 (인벤토리/금고)"]
     CheckTarget -- "목표치 없음/누락" --> SuggestTemplate{"템플릿 목표치(일괄 100개) 권유"}
-    SuggestTemplate -- "템플릿 수락" --> ApplyTemplate["템플릿 목표치 적용 (target.md 생성/갱신)"]
+    SuggestTemplate -- "템플릿 수락" --> ApplyTemplate["템플릿 목표치 적용 (target_gathering.md 생성/갱신)"]
     ApplyTemplate --> CurrentStock
     SuggestTemplate -- "템플릿 거절" --> AskCustomTarget["구체적 목표치 입력 요청"]
     AskCustomTarget --> CurrentStock
     CurrentStock --> CheckOtherChars["5. 타 캐릭터 재고 확인 (10개 이상 기준)"]
     CheckOtherChars --> DecideGather{"6. 실제 부족 수량 존재 여부"}
     DecideGather -- "부족 없음 (타 캐릭터 보유)" --> HoldItem["채집 보류 및 잔여 재고 기록"]
-    DecideGather -- "실제 부족분 발생" --> PrioritySort["7. 우선순위 결정 (target.md 아래쪽 우선)"]
+    DecideGather -- "실제 부족분 발생" --> PrioritySort["7. 우선순위 결정 (target_gathering.md 아래쪽 우선)"]
     PrioritySort --> CheckToolSkill{"8. 생활 레벨 & 도구 보유 사전 점검 (get_gatherable_items)"}
     CheckToolSkill -- "레벨 부족 / 도구 없음" --> NotifyUser["사용자에게 도구 준비/레벨 부족 알림 및 스킵"]
     CheckToolSkill -- "채집 가능" --> CheckWeight{"9. 인벤토리 무게 점검 (get_inventory)"}
@@ -42,10 +42,10 @@ flowchart TD
 1. **작업 시작 및 연결 확인**:
    * `MabinogiMobile_CLI status`로 인게임 연결을 확인합니다.
 2. **목표치 점검**:
-   * `data/target.md`를 읽어 관리 대상 아이템의 목표 수량을 확인합니다.
-   * `target.md`가 없거나 특정 아이템의 목표치가 누락된 경우:
-     * 사용자에게 템플릿([`references/templates/target.md`](../templates/target.md))에 정의된 기본 목표치(`DEFAULT_TARGET_STOCK_QUANTITY`=100개)를 사용할 것을 권유합니다.
-     * 사용자가 템플릿을 그대로 사용하겠다고 동의하면 템플릿의 목표치를 적용(`data/target.md` 생성 또는 갱신)합니다.
+   * `data/target_gathering.md`를 읽어 관리 대상 채집 아이템의 목표 수량을 확인합니다.
+   * `target_gathering.md`가 없거나 특정 아이템의 목표치가 누락된 경우:
+     * 사용자에게 템플릿([`references/templates/target_gathering.md`](../templates/target_gathering.md))에 정의된 기본 목표치(`DEFAULT_TARGET_STOCK_QUANTITY`=100개)를 사용할 것을 권유합니다.
+     * 사용자가 템플릿을 그대로 사용하겠다고 동의하면 템플릿의 목표치를 적용(`data/target_gathering.md` 생성 또는 갱신)합니다.
      * 사용자가 해당 목표치를 사용하지 않는다고 하면 구체적인 목표 수량을 직접 입력해 줄 것을 요구합니다.
 3. **기준 캐릭터 지정 및 재고 파악**:
    * 재고 판단의 기준은 **'현재 접속한 캐릭터'**입니다.
@@ -56,7 +56,7 @@ flowchart TD
    * 다른 캐릭터에 재고가 **10개 이상** 존재하는 경우 해당 아이템의 채집을 보류합니다.
    * **(예외 규칙)**: 다른 캐릭터가 가진 수량이 **10개 미만**인 경우는 실질적인 재고로 보지 않고 무시하여 채집 대상에 포함합니다.
 6. **우선순위 배정 (`TARGET_PRIORITY_RULE`)**:
-   * `data/target.md` 목록에서 **아래쪽에 위치한 항목일수록 높은 우선순위**를 가집니다.
+   * `data/target_gathering.md` 목록에서 **아래쪽에 위치한 항목일수록 높은 우선순위**를 가집니다.
    * 여러 아이템이 부족할 경우, 목록의 아래쪽 아이템부터 순서대로 채집 계획을 수립합니다.
 7. **채집 도구 및 생활 스킬 레벨 사전 점검 (`get_gatherable_items`)**:
    * 채집 대상 아이템에 대해 `get_gatherable_items`를 호출하여, 현재 캐릭터의 생활 스킬 레벨이 충족되는지 및 필요한 채집 도구를 보유/장착하고 있는지 사전에 점검합니다.

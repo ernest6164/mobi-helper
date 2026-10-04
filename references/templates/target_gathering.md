@@ -1,12 +1,12 @@
-# 템플릿: 재고 목표치 (`target.md`)
+# 템플릿: 채집 재고 목표치 (`target_gathering.md`)
 
-* **대상 파일**: `data/target.md`
-* **설명**: 재고 목표치를 관리하는 파일로, 기본 권유 목표 수량(`DEFAULT_TARGET_STOCK_QUANTITY`=100개)이 반영된 마크다운 테이블 형식입니다.
+* **대상 파일**: `data/target_gathering.md`
+* **설명**: 채집물 재고 목표치를 관리하는 파일로, 기본 권유 목표 수량(`DEFAULT_TARGET_STOCK_QUANTITY`=100개)이 반영된 마크다운 테이블 형식입니다.
 
 ---
 
 ```markdown
-# 채집 재고 목표치 (Target)
+# 채집 재고 목표치 (Target Gathering)
 
 | 아이템명 | 목표 수량 |
 | :--- | :--- |

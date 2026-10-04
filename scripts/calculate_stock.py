@@ -5,13 +5,13 @@ calculate_stock.py - 재고 현황 계산 및 부족분 산출 공용 스크립�
 
 기능:
     - 현재 접속 캐릭터 및 타 캐릭터(인벤토리/개인금고/공용금고)의 재고 통합 집계
-    - target.md 목표치 비교 및 부족분(missing.json) 산출
+    - target_gathering.md (또는 target.md) 목표치 비교 및 부족분(missing.json) 산출
     - 타 캐릭터 보유량 10개 이상(OTHER_CHAR_STOCK_THRESHOLD) 시 보류 판정
     - 역순 우선순위(Bottom-up) 정렬 및 상세 보고서 출력
 
 사용 예시:
     python scripts/calculate_stock.py --current-char Saki
-    python scripts/calculate_stock.py --current-char 아미나 --target-file data/target.md
+    python scripts/calculate_stock.py --current-char 아미나 --target-file data/target_gathering.md
 """
 
 import argparse
@@ -194,14 +194,18 @@ def main():
     parser.add_argument("--current-char", default=default_char, help=f"현재 기준 캐릭터명 (기본값: {default_char})")
     parser.add_argument("--server", default=default_server, help=f"서버명 (기본값: {default_server})")
     parser.add_argument("--data-dir", default=default_data_dir, help="data 디렉토리 경로")
-    parser.add_argument("--target-file", default=None, help="target.md 파일 경로 (기본값: data/target.md)")
+    parser.add_argument("--target-file", default=None, help="목표치 마크다운 파일 경로 (기본값: data/target_gathering.md)")
     parser.add_argument("--output-file", default=None, help="부족분 JSON 저장 경로 (임시 계산 결과는 기본값: scratch/missing.json)")
     parser.add_argument("--threshold", type=int, default=default_threshold, help=f"타 캐릭터 보유 보류 임계값 (기본값: {default_threshold})")
     parser.add_argument("--priority", choices=["bottom-up", "top-down"], default=default_priority, help=f"우선순위 정렬 방식 (기본값: {default_priority})")
 
     args = parser.parse_args()
     data_dir = os.path.abspath(args.data_dir)
-    target_file = args.target_file or os.path.join(data_dir, "target.md")
+    if args.target_file:
+        target_file = args.target_file
+    else:
+        gathering_target = os.path.join(data_dir, "target_gathering.md")
+        target_file = gathering_target if os.path.exists(gathering_target) else os.path.join(data_dir, "target.md")
     scratch_dir = os.path.abspath(os.path.join(data_dir, "..", "scratch"))
     output_file = args.output_file or os.path.join(scratch_dir, "missing.json")
 

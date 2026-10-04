@@ -76,7 +76,7 @@
 | 필드명 | 타입 | 기본 예시값 | 설명 |
 | :--- | :---: | :--- | :--- |
 | `otherCharStockThreshold` | `number` | `10` | 타 캐릭터 보유 시 채집 보류 판정 임계치 (개) |
-| `priorityOrder` | `string` | `"bottom-up"` | `target.md` 목표 채집물 우선순위 정렬 방식 (`bottom-up` / `top-down`) |
+| `priorityOrder` | `string` | `"bottom-up"` | 목표치 문서(`target_*.md`) 우선순위 정렬 방식 (`bottom-up` / `top-down`) |
 
 ---
 

@@ -4,7 +4,7 @@ r"""
 execute_gathering.py - 재고 보충 자동 채집 실행 및 모니터링 공용 스크립트
 
 기능:
-    - target.md 역순 우선순위(Bottom-up) 및 타 캐릭터 보유 여부(10개 이상) 점검
+    - target_gathering.md (또는 target.md) 역순 우선순위(Bottom-up) 및 타 캐릭터 보유 여부(10개 이상) 점검
     - 채집 도구 및 생활 스킬 레벨 사전 확인 (get_gatherable_items)
     - 인벤토리 무게 한도 실시간 점검 (98% 초과 시 안전 중단)
     - 백그라운드 채집 실행 및 목표 달성 시 즉시 stop_action 호출
@@ -406,7 +406,7 @@ def main():
     parser.add_argument("--server", default=default_server, help=f"서버명 (기본값: {default_server})")
     parser.add_argument("--cli-path", default=None, help="MabinogiMobile_CLI.exe 경로")
     parser.add_argument("--data-dir", default=default_data_dir, help="data 디렉토리 경로")
-    parser.add_argument("--target-file", default=None, help="target.md 경로")
+    parser.add_argument("--target-file", default=None, help="채집 목표 파일 경로 (기본값: data/target_gathering.md)")
     parser.add_argument("--single-item", default=None, help="단일 품목만 채집할 경우 아이템명")
     parser.add_argument("--single-count", type=int, default=None, help="단일 품목 목표 수량")
     parser.add_argument("--threshold", type=int, default=default_threshold, help=f"타 캐릭터 보유 보류 임계값 (기본값: {default_threshold})")
@@ -415,7 +415,11 @@ def main():
     args = parser.parse_args()
     data_dir = os.path.abspath(args.data_dir)
     cli_path = resolve_cli_path(args.cli_path, data_dir)
-    target_file = args.target_file or os.path.join(data_dir, "target.md")
+    if args.target_file:
+        target_file = args.target_file
+    else:
+        gathering_target = os.path.join(data_dir, "target_gathering.md")
+        target_file = gathering_target if os.path.exists(gathering_target) else os.path.join(data_dir, "target.md")
 
     execute_auto_gathering(
         char_name=args.char_name,

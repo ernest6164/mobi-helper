@@ -59,13 +59,13 @@
 
 ### 3. `calculate_stock.py` (재고 집계 및 부족분 산출)
 
-* **설명**: 현재 캐릭터 및 타 캐릭터(인벤토리, 개인 금고, 서버 공용 금고)의 재고 데이터를 통합 분석하고, `data/target.md` 목표 수량과 비교하여 즉시 채집이 필요한 품목과 타 캐릭터 보유로 보류되는 품목을 분류하여 중간 결과물(`scratch/missing.json`) 생성 및 콘솔 보고서를 출력합니다.
+* **설명**: 현재 캐릭터 및 타 캐릭터(인벤토리, 개인 금고, 서버 공용 금고)의 재고 데이터를 통합 분석하고, `data/target_gathering.md` (또는 지정된 목표 파일) 목표 수량과 비교하여 즉시 채집이 필요한 품목과 타 캐릭터 보유로 보류되는 품목을 분류하여 중간 결과물(`scratch/missing.json`) 생성 및 콘솔 보고서를 출력합니다.
 * **사용 시점**:
   * 채집 작업 전 부족분 현황 파악, `"재고 계산해줘"`, `"부족한 재료 알려줘"` 요청 시
 * **주요 매개변수**:
   * `--current-char` *(선택)*: 기준 캐릭터명 (기본값: `Saki` 또는 `data/environments.json`의 `activeCharacter`)
   * `--server` *(선택)*: 서버명 (기본값: `던컨` 또는 `data/environments.json`의 `defaultServer`)
-  * `--target-file` *(선택)*: 목표 설정 파일 경로 (기본값: `data/target.md`)
+  * `--target-file` *(선택)*: 목표 설정 파일 경로 (기본값: `data/target_gathering.md`)
   * `--output-file` *(선택)*: 부족분 JSON 출력 경로 (임시 중간 결과물 기본값: `scratch/missing.json`)
   * `--threshold` *(선택)*: 타 캐릭터 보유 보류 임계값 (기본값: `10` 또는 `data/environments.json`의 `otherCharStockThreshold`)
   * `--priority` *(선택)*: 정렬 우선순위 방식 (`bottom-up` / `top-down`, 기본값: `bottom-up`)
@@ -79,13 +79,13 @@
 
 ### 4. `execute_gathering.py` (자동 채집 루프 및 실시간 모니터링)
 
-* **설명**: `target.md` 역순 우선순위(`BOTTOM_UP`)와 타 캐릭터 보유량(`OTHER_CHAR_STOCK_THRESHOLD`=10)을 검토하여 채집 대상을 결정하고, 생활 스킬/도구 사전 점검 및 인벤토리 무게 점검(98% 한도) 후 백그라운드 채집을 수행합니다. 목표 수량 도달 시 즉시 중단하며 완료 후 인벤토리 CSV 및 캐릭터 MD 문서를 자동 동기화합니다.
+* **설명**: `target_gathering.md` 역순 우선순위(`BOTTOM_UP`)와 타 캐릭터 보유량(`OTHER_CHAR_STOCK_THRESHOLD`=10)을 검토하여 채집 대상을 결정하고, 생활 스킬/도구 사전 점검 및 인벤토리 무게 점검(98% 한도) 후 백그라운드 채집을 수행합니다. 목표 수량 도달 시 즉시 중단하며 완료 후 인벤토리 CSV 및 캐릭터 MD 문서를 자동 동기화합니다.
 * **사용 시점**:
   * `"재고 보충해줘"`, `"부족한거 채집해줘"`, `"양털 채집해줘"` 등의 요청 시
 * **주요 매개변수**:
   * `--char-name` *(선택)*: 채집을 수행할 캐릭터명 (기본값: `Saki`)
   * `--server` *(선택)*: 서버명 (기본값: `던컨`)
-  * `--target-file` *(선택)*: 목표 파일 경로 (기본값: `data/target.md`)
+  * `--target-file` *(선택)*: 목표 파일 경로 (기본값: `data/target_gathering.md`)
   * `--single-item` *(선택)*: 단일 특정 품목만 채집할 경우 아이템명 (예: `"양털"`)
   * `--single-count` *(선택)*: 단일 특정 품목의 목표 수량 (예: `100`)
   * `--threshold` *(선택)*: 타 캐릭터 보류 임계값 (기본값: `10`)
