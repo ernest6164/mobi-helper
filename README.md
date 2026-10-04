@@ -1,4 +1,4 @@
-# MobiStockManager (마비노기 모바일 헬퍼 스킬)
+# mobi-helper (마비노기 모바일 헬퍼 스킬)
 
 마비노기 모바일(PC 클라이언트)의 AI 커넥터(`MabinogiMobile_CLI.exe`)를 활용하여 캐릭터 정보, 인벤토리/금고 재고, 퀘스트 및 미션 진행 상황을 관리하고 채집 작업을 자동화하는 **AI 에이전트 스킬(Skill)** 패키지입니다.
 
@@ -30,7 +30,7 @@ https://github.com/ernest6164/mobi-helper 저장소의 스킬을 내 글로벌 �
 ## 3. 📁 프로젝트 디렉토리 구조
 
 ```text
-MobiStockManager/
+mobi-helper/
 ├── SKILL.md                 # 스킬 메인 정의 및 실행 워크플로우 (핵심)
 ├── README.md                # 스킬 소개, 지원 명령어 및 디렉토리 구조 안내
 ├── AGENTS.md                # 워크스페이스 기본 운영 지침
