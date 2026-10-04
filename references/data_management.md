@@ -56,8 +56,10 @@
 
 | 파일명 | 설명 | 포맷 |
 | :--- | :--- | :---: |
+| `environments.json` | CLI 도구 경로, 실행 환경, 기본 캐릭터/서버 및 규칙 통합 설정 (명세: `references/environments.md`) | JSON |
+| `know-how.md` | 시스템 종속적인 도구 사용 노하우 및 가상환경 실행법 | Markdown |
+| `TODO.md` | 프로젝트 작업 대기열 및 정합성 점검 대시보드 | Markdown |
 | `workflows_custom.md` | 사용자가 개별 정의한 특수 규칙 문서 (API 응답 다음 2순위 적용) | Markdown |
-
 | `characters/README.md` | 계정 내 모든 캐릭터의 요약 정보 및 색인 시트 (구 `characters.md`) | Markdown |
 | `characters/(서버명)_(캐릭터명).md` | 개별 캐릭터 상세 정보 및 연관 데이터 갱신 일시 | Markdown |
 | `characters/(서버명)_(캐릭터명)_inventory.csv` | 해당 캐릭터의 인벤토리 아이템 목록 | CSV |
@@ -68,6 +70,5 @@
 | `recipes.csv` | 수집된 가공/제작 레시피 정보 데이터베이스 | CSV |
 | `chatbot/README.md` | 챗봇 지식 문서 전체 색인(Index) 및 태그 목록 | Markdown |
 | `chatbot/(주제명).md` | 개별 게임 공략 및 가이드 지식 문서 (상단 `#태그` 포함) | Markdown |
-| `path.txt` | `MabinogiMobile_CLI.exe` 도구의 로컬 절대 경로 | Text |
 
 

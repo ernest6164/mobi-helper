@@ -15,9 +15,9 @@ description: >-
 
 ## 1. 사전 확인 및 연결 절차
 
-1. **CLI 도구 경로 확인**:
-   * `data/path.txt` 파일이 있는지 확인합니다.
-   * 경로가 없으면 로컬 드라이브에서 `MabinogiMobile_CLI.exe`를 검색하여 유효한 경로를 `data/path.txt`에 기록합니다.
+1. **CLI 도구 경로 및 환경 설정 확인**:
+   * `data/environments.json` 파일의 `paths.cli` 경로를 확인합니다. (상세 구조는 [`references/environments.md`](./references/environments.md) 참조)
+   * 경로가 없으면 로컬 드라이브에서 `MabinogiMobile_CLI.exe`를 검색하여 유효한 경로를 `data/environments.json`에 기록합니다.
 2. **연결 상태 점검**:
    ```powershell
    <CLI경로> status
@@ -26,10 +26,13 @@ description: >-
    * `disconnected` 상태인 경우, 사용자에게 인게임 **[메뉴(≡)] → [환경 설정] → [게임] → [AI 제어]** 옵션이 켜져 있는지 확인을 요청합니다.
 3. **사용자 정의 특수 규칙 점검 (`data/workflows_custom.md`)**:
    * 특수 규칙이 존재할 경우, API 응답 다음으로 우선 적용(2순위)되어 스킬의 기존 기본 동작이나 워크플로우를 무시하거나 변경하여 동작합니다.
+4. **공용 스크립트 및 환경 설정 참조 (`scripts/`, `data/environments.json`)**:
+   * 반복적이거나 표준적인 데이터 처리, 동기화, 재고 계산, 채팅 전송 작업 시 `scripts/README.md`를 확인하고 표준 공용 스크립트(`scripts/`)를 우선적으로 활용합니다.
+   * 머신/사용자별 가변 매개변수는 `data/environments.json` 및 `data/know-how.md`를 참조하여 전달하며, 모든 스크립트는 프로젝트 가상환경(`.venv\Scripts\python.exe`)으로 실행합니다.
 
 
 > [!IMPORTANT]
-> **한글/비-ASCII 데이터 전송 규칙**: Windows 콘솔 인코딩 문제 방지를 위해, 한글이 포함된 문자열이나 JSON Body는 반드시 **UTF-8 Base64**로 인코딩하여 `base64:<Base64문자열>` 형태로 CLI에 전달해야 합니다.
+> **한글/비-ASCII 데이터 전송 규칙**: Windows 콘솔 인코딩 문제 방지를 위해, 한글이 포함된 문자열이나 JSON Body는 반드시 **UTF-8 Base64**로 인코딩하여 `base64:<Base64문자열>` 형태로 CLI에 전달해야 합니다. (공용 스크립트 사용 시 자동 처리됨)
 
 ---
 
@@ -94,9 +97,11 @@ description: >-
 
 세부 명세, 워크플로우 다이어그램 및 템플릿 양식은 아래 문서를 참조합니다.
 
+* **공용 스크립트 라이브러리 가이드**: [scripts/README.md](./scripts/README.md)
 * **표준 작업 흐름(상세 플로우차트 및 절차)**: [references/workflows.md](./references/workflows.md)
 * **CLI 전체 명령어 및 인코딩 가이드**: [references/cli_guide.md](./references/cli_guide.md)
 * **데이터 관리 원칙 및 명명 규칙**: [references/data_management.md](./references/data_management.md)
+* **환경 설정 정의 및 스키마 명세**: [references/environments.md](./references/environments.md)
 * **시스템 전역 상수 정의**: [references/constants.md](./references/constants.md)
 * **데이터 표준 포맷 및 작성 템플릿**: [references/templates.md](./references/templates.md)
 * **부록 및 환경/도구 팁**: [references/appendix.md](./references/appendix.md)

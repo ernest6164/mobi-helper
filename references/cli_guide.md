@@ -21,9 +21,9 @@
 
 특정 설치 경로에 의존하지 않고 범용성을 유지하기 위해 절대 경로를 코드에 하드코딩하지 않습니다.
 
-1. 먼저 `data/path.txt` 파일이 존재하는지 확인합니다.
+1. 먼저 `data/environments.json` 파일의 `paths.cli` 항목이 존재하는지 확인합니다.
 2. 존재한다면 해당 파일에 적힌 경로로 CLI 도구를 호출합니다.
-3. 존재하지 않는다면 로컬 드라이브에서 `MabinogiMobile_CLI.exe`를 검색하여 찾은 후 `data/path.txt`에 저장합니다.
+3. 존재하지 않는다면 로컬 드라이브에서 `MabinogiMobile_CLI.exe`를 검색하여 찾은 후 `data/environments.json`의 `paths.cli`에 저장합니다. (상세 구조는 [`references/environments.md`](./environments.md) 참조)
 
 ---
 

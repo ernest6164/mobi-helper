@@ -33,7 +33,7 @@ flowchart TD
 
 ### 1.1. 세부 실행 절차
 1. **CLI 경로 및 연결 상태 점검**:
-   * `data/path.txt` 확인 후 없으면 로컬 탐색하여 기록합니다.
+   * `data/environments.json`의 `paths.cli` 확인 후 없으면 로컬 탐색하여 기록합니다.
    * `MabinogiMobile_CLI status`를 실행하여 `{"pipe":"connected"}` 상태인지 확인합니다.
 2. **접속 캐릭터명 확인 (필수)**:
    * **(중요)** 커넥터 API는 현재 접속 중인 캐릭터의 닉네임을 반환하지 않으므로, 항상 **사용자에게 현재 접속 중인 캐릭터명이 무엇인지 확인 요청**합니다.
