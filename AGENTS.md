@@ -1,36 +1,15 @@
-# 마비노기 모바일 헬퍼
+# 마비노기 모바일 헬퍼 운영 원칙 (AGENTS.md)
 
-본 문서는 마비노기 모바일 헬퍼 스킬 및 워크스페이스 운영을 위한 기본 규칙을 제공합니다.
-
----
-
-## 1. 개요 및 운영 원칙
-
-* **에이전트 독립성 및 범용성 원칙**:
-  * 본 프로젝트는 **특정 AI 에이전트나 전용 툴체인에 의존하지 않으며**, 표준적인 명령 실행 및 파일 입출력이 가능한 모든 AI 에이전트/어시스턴트 환경에서 범용적으로 동작하도록 설계되었습니다.
-  * 단, 특정 에이전트 플랫폼이나 특정 개발 도구/IDE 전용의 부가 기능 및 환경 설정 가이드는 예외적으로 [`references/appendix/`](./references/appendix/README.md)에서 분리하여 다룹니다.
-* **구체적 경로 및 환경 비종속성 원칙**:
-  * 프로젝트 내 공용 문서에는 **특정 머신의 로컬 절대 경로, 특정 사용자 디렉토리 경로, 하드코딩된 실행 경로 등을 명시하지 않습니다.**
-  * 도구의 위치는 동적 탐색 또는 `data/environments.json`과 같은 설정 파일을 통해 참조하도록 추상화하여 관리합니다.
-  * 특정 머신/사용자 환경에 종속적인 설정값 및 실행 환경은 `data/environments.json`에 정의하고 [`references/environments.md`](./references/environments.md)로 구조를 명세하며, 도구 실행 경로(Git 경로, Python venv 가상환경 등) 및 환경 노하우는 `data/know-how.md`에 저장하고 적극 참조하여 활용합니다.
-* **스킬 기반 모듈 아키텍처**:
-  * 메인 워크플로우 및 실행 지침: [`SKILL.md`](./SKILL.md)
-  * 공용 스크립트 라이브러리 가이드: [`scripts/README.md`](./scripts/README.md)
-  * 상세 작업 흐름 (동기화, 재고 보충, 챗봇 지식): [`references/workflows/`](./references/workflows/README.md)
-  * CLI 가이드 및 API 명세: [`references/cli_guide.md`](./references/cli_guide.md)
-  * 데이터 관리 원칙: [`references/data_management.md`](./references/data_management.md)
-  * 환경 설정 정의 및 스키마 명세: [`references/environments.md`](./references/environments.md)
-  * 전역 상수 및 설정 정의: [`references/constants.md`](./references/constants.md)
-  * 데이터 작성 템플릿: [`references/templates/`](./references/templates/README.md)
-  * 부록 및 특정 환경 가이드: [`references/appendix/`](./references/appendix/README.md)
-* **디렉토리 구조 및 관리 원칙**:
-  * 표준화된 공용 스크립트는 `scripts/` 폴더에서 관리하며 Git 버전 관리에 포함합니다. 각 스크립트는 매개변수화되어 환경에 독립적으로 동작합니다.
-  * **생성이 명시된 모든 문서(캐릭터 정보, 재고 CSV, 환경 설정 `data/environments.json`, 시스템 노하우 `data/know-how.md`, 작업 대기열 `data/TODO.md` 등)는 예외 없이 `data/` 폴더에서 생성 및 관리**합니다.
-  * `scratch/` 폴더는 영구 보관할 필요가 없는 일회성 임시 스크립트나 중간 계산 결과물만을 임시로 다루는 공간으로 사용합니다.
-  * `data/`와 `scratch/` 폴더는 `.gitignore`에 등록하여 Git 버전 관리에 포함되지 않도록 합니다.
-* **개인정보 보호 및 비식별화 원칙**:
-  * **비식별화되지 않은 개인정보(사용자 실명, 개인 식별자, 계정 정보, 민감 데이터 등)는 절대 Git 등 버전 관리 시스템에 등재되지 않도록 철저히 관리**합니다.
-  * 모든 인게임 캐릭터 데이터 및 운영 데이터는 버전 관리에서 제외된 `data/` 및 `scratch/` 영역 내에서만 안전하게 관리합니다.
-
-* **문서 갱신 일시**: 2026년 10월 5일
-
+1. **환경 비종속성 및 동적 설정**:
+   - 로컬 절대 경로를 하드코딩하지 않습니다.
+   - CLI 도구 및 실행 환경 경로는 `data/environments.json` 및 `data/know-how.md`를 참조하여 동적으로 처리합니다.
+2. **가상환경 실행**:
+   - 모든 Python 스크립트(`scripts/`)는 프로젝트 가상환경(`.venv\Scripts\python.exe`)으로 실행합니다.
+3. **디렉토리 관리 및 데이터 격리**:
+   - **생성/운영 데이터**: 캐릭터 정보, 재고 CSV, 챗봇 지식, 환경 설정 등 모든 산출물은 `data/`에만 생성·관리합니다.
+   - **임시 스크립트**: 일회성/테스트 스크립트는 `scratch/`에 작성합니다.
+   - `data/` 및 `scratch/`는 Git 추적에서 제외됩니다.
+4. **개인정보 비식별화**:
+   - 비식별화되지 않은 사용자 실명, 개인 식별자, 계정 정보 등 민감 데이터는 버전 관리에 포함하지 않습니다.
+5. **스킬 기반 작업 분기**:
+   - 인게임 제어 및 데이터 작업 요청 시 `SKILL.md`를 진입점으로 삼아 각 세부 워크플로우를 참조하여 처리합니다.
