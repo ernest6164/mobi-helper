@@ -15,7 +15,7 @@
   * `get_altering_works`: 진행 중/완료된 가공 작업 내역 확인
   * `execute_altering`: 가공 레시피 대기열 등록 (해당 가공 시설로 자동 이동 포함)
   * `complete_altering_work`: 완료된 가공 작업물 일괄 수령 (시설 이동 포함)
-* **레시피 데이터베이스**: `data/recipes.csv`
+* **레시피 데이터베이스**: `data/recipe_altering.md`
 
 ---
 

@@ -18,7 +18,8 @@
 | 4 | 인벤토리/보관함 CSV | `data/characters/*.csv` | [`inventory_bank_csv.md`](./inventory_bank_csv.md) | 인벤토리, 개인 금고, 공용 금고 아이템 CSV |
 | 5 | 퀘스트 및 미션 진행 상황 | `data/characters/(서버)_(캐릭터)_quest.md` | [`quest_mission.md`](./quest_mission.md) | 퀘스트 및 일일/주간 미션 진행/완료/보상 수령 표 |
 | 6 | 시스템 및 환경 설정 | `data/environments.json` | [`environments_json.md`](./environments_json.md) | CLI 도구 경로, 가상환경, 기본 설정 JSON |
-| 7 | 가공/제작 레시피 DB | `data/recipes.csv` | [`recipes_csv.md`](./recipes_csv.md) | 가공 및 제작 레시피 데이터베이스 CSV |
+| 7-1 | 가공 레시피 | `data/recipe_altering.md` | [`recipe_altering.md`](./recipe_altering.md) | 가공 시설별 레시피 및 재료 관리 테이블 |
+| 7-2 | 제작 레시피 | `data/recipe_crafting.md` | [`recipe_crafting.md`](./recipe_crafting.md) | 제작 시설별 레시피 및 재료 관리 테이블 |
 | 8 | 사용자 정의 특수 규칙 | `data/workflows_custom.md` | [`workflows_custom.md`](./workflows_custom.md) | 2순위 최우선 적용되는 사용자 커스텀 규칙 |
 | 9 | 챗봇 지식 색인 | `data/chatbot/README.md` | [`chatbot_index.md`](./chatbot_index.md) | 챗봇 지식베이스 공략/가이드 문서 색인 및 태그 목록 |
 | 10 | 챗봇 개별 지식 문서 | `data/chatbot/(주제명).md` | [`chatbot_detail.md`](./chatbot_detail.md) | 공략 본문, 태그, 갱신 설정 및 50자 분할 전달문 |

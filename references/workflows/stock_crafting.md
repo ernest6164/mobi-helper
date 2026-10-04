@@ -13,7 +13,7 @@
 * **관련 CLI API**:
   * `get_craftable_items`: 제작 레시피, 필요 재료 및 제작 가능 여부 확인
   * `execute_crafting`: 아이템 제작 실행 (해당 시설 이동 및 결과물 수령 포함)
-* **레시피 데이터베이스**: `data/recipes.csv`
+* **레시피 데이터베이스**: `data/recipe_crafting.md`
 
 ---
 

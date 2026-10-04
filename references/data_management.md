@@ -38,9 +38,9 @@
   * **채집 재고 목표치 (`target_gathering.md`)**: 채집물 목표 수량 관리
   * **가공 재고 목표치 (`target_altering.md`)**: 가공 결과물 목표 수량 관리
   * **제작 재고 목표치 (`target_crafting.md`)**: 제작 완제품/결과물 목표 수량 관리
-  * **우선순위 (`TARGET_PRIORITY_RULE`)**: 목록에서 **아래쪽에 위치한 항목일수록 높은 우선순위**를 가집니다. 작업 시 아래쪽 항목부터 우선적으로 진행합니다.
-* **레시피 관리 (`recipes.csv`)**: 가공/제작 레시피 정보를 수집하여 데이터베이스 형태로 관리합니다.
-* **챗봇 지식베이스 (`chatbot/`)**:
+* **레시피 관리 (`recipe_*.md`)**: 가공/제작 레시피 정보를 마크다운 테이블 형태로 세분화하여 관리합니다.
+  * **가공 레시피 (`recipe_altering.md`)**: 가공 시설별 결과물, 필요 재료 및 생산 수량 관리
+  * **제작 레시피 (`recipe_crafting.md`)**: 제작 시설/카테고리별 제작 아이템, 필요 재료 및 생산 수량 관리
   * 인게임 공략, 팁, 채집/제작 방법 등을 관리하는 지식 저장소입니다.
   * `chatbot/README.md`에 전체 지식 문서의 색인(Index)과 태그 목록을 유지합니다.
   * 개별 문서는 `chatbot/(주제명).md` 형태로 생성되며, 상단에 `#태그`를 포함하여 키워드 검색 시 활용됩니다.
@@ -72,7 +72,8 @@
 | `target_gathering.md` | 채집 아이템별 재고 목표치 설정 문서 | Markdown |
 | `target_altering.md` | 가공 결과물별 재고 목표치 설정 문서 | Markdown |
 | `target_crafting.md` | 제작 결과물별 재고 목표치 설정 문서 | Markdown |
-| `recipes.csv` | 수집된 가공/제작 레시피 정보 데이터베이스 | CSV |
+| `recipe_altering.md` | 가공 시설별 레시피 및 필요 재료 정보 문서 | Markdown |
+| `recipe_crafting.md` | 제작 시설별 레시피 및 필요 재료 정보 문서 | Markdown |
 | `chatbot/README.md` | 챗봇 지식 문서 전체 색인(Index) 및 태그 목록 | Markdown |
 | `chatbot/(주제명).md` | 개별 게임 공략 및 가이드 지식 문서 (상단 `#태그` 포함) | Markdown |
 | `response/(명령어).json` | CLI 명령어 실행에 대한 응답 결과 저장 파일 | JSON |
