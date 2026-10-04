@@ -23,6 +23,9 @@ description: >-
    ```
    * `{"pipe":"connected"}`가 반환되면 정상 연결 상태입니다.
    * `disconnected` 상태인 경우, 사용자에게 인게임 **[메뉴(≡)] → [환경 설정] → [게임] → [AI 제어]** 옵션이 켜져 있는지 확인을 요청합니다.
+3. **사용자 정의 특수 규칙 점검 (`data/workflows_custom.md`)**:
+   * `data/workflows_custom.md` 파일의 존재 여부를 점검합니다.
+   * 특수 규칙이 존재할 경우, 스킬의 기존 기본 동작이나 워크플로우를 무시하거나 변경하여 **해당 규칙을 최우선으로 적용**하여 동작합니다.
 
 > [!IMPORTANT]
 > **한글/비-ASCII 데이터 전송 규칙**: Windows 콘솔 인코딩 문제 방지를 위해, 한글이 포함된 문자열이나 JSON Body는 반드시 **UTF-8 Base64**로 인코딩하여 `base64:<Base64문자열>` 형태로 CLI에 전달해야 합니다.
@@ -68,7 +71,7 @@ description: >-
 
 세부 명세, 워크플로우 다이어그램 및 템플릿 양식은 아래 문서를 참조합니다.
 
-* **표준 작업 흐름(상세 플로우차트 및 절차)**: [references/workflow.md](./references/workflow.md)
+* **표준 작업 흐름(상세 플로우차트 및 절차)**: [references/workflows.md](./references/workflows.md)
 * **CLI 전체 명령어 및 인코딩 가이드**: [references/cli_guide.md](./references/cli_guide.md)
 * **데이터 관리 원칙 및 명명 규칙**: [references/data_management.md](./references/data_management.md)
 * **시스템 전역 상수 정의**: [references/constants.md](./references/constants.md)

@@ -14,7 +14,7 @@
   * 도구의 위치는 동적 탐색 또는 `data/path.txt`와 같은 설정 파일을 통해 참조하도록 추상화하여 관리합니다.
 * **스킬 기반 모듈 아키텍처**:
   * 메인 워크플로우 및 실행 지침: [`SKILL.md`](./SKILL.md)
-  * 상세 작업 흐름 (저장/동기화 & 재고 보충): [`references/workflow.md`](./references/workflow.md)
+  * 상세 작업 흐름 (저장/동기화 & 재고 보충): [`references/workflows.md`](./references/workflows.md)
   * CLI 가이드 및 API 명세: [`references/cli_guide.md`](./references/cli_guide.md)
   * 데이터 관리 원칙: [`references/data_management.md`](./references/data_management.md)
   * 전역 상수 및 설정 정의: [`references/constants.md`](./references/constants.md)
@@ -24,4 +24,4 @@
   * 명시적으로 작성을 지시받지 않은 일회성 스크립트, 임시 문서 및 **작업 대기열 문서(`scratch/TODO.md`)**는 항상 `scratch/` 폴더에서 작성 및 관리합니다.
   * 시스템 운영으로 파생되는 모든 데이터 문서(캐릭터 정보, 재고 CSV 등)는 `data/` 폴더에 생성 및 관리합니다.
   * `data/`와 `scratch/` 폴더는 `.gitignore`에 등록하여 Git 버전 관리에 포함되지 않도록 합니다.
-* **문서 갱신 일시**: 2026년 10월 4일
+* **문서 갱신 일시**: 2026년 10월 5일
