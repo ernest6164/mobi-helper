@@ -29,7 +29,7 @@ description: >-
 | :--- | :--- | :--- |
 | **정보 저장 및 동기화** | `"캐릭터 정보 저장해줘"`, `"동기화해줘"`, `"인벤토리 갱신해줘"` | [`references/workflows/info_sync.md`](./references/workflows/info_sync.md) |
 | **재고 보충 및 채집** | `"재고 보충해줘"`, `"부족한 재료 채집해줘"`, `"목표치까지 모아줘"` | [`references/workflows/stock_replenishment.md`](./references/workflows/stock_replenishment.md) |
-| **챗봇 지식 & 인게임 채팅** | `"안녕하세요 라고 말해줘"`, `"~공략 말해줘"`, `"채팅으로 쳐줘"` | [`references/workflows/chatbot_chat.md`](./references/workflows/chatbot_chat.md) |
+| **챗봇 지식 & 인게임 채팅** | `"모비에 안녕하세요 라고 말해줘"`, `"모비에 ~공략 말해줘"`, `"모비에서 채팅으로 쳐줘"` | [`references/workflows/chatbot_chat.md`](./references/workflows/chatbot_chat.md) |
 | **기타 인게임 액션** | `"악보 연주해줘"`, `"가공해줘"`, `"제작해줘"`, `"소셜 액션 해줘"` | [`references/cli_guide.md`](./references/cli_guide.md) |
 
 ---
