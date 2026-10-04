@@ -29,6 +29,10 @@
     "defaultMaxChunks": 3,
     "rateLimitSeconds": 2.5
   },
+  "chatbotSettings": {
+    "knowledgeRefreshDays": 7,
+    "defaultAutoRefresh": "yes"
+  },
   "stockSettings": {
     "otherCharStockThreshold": 10,
     "priorityOrder": "bottom-up"
@@ -62,7 +66,13 @@
 | `defaultMaxChunks` | `number` | `3` | 일반 지식/공략 전달 시 기본 최대 청크 수 (`DEFAULT_MAX_CHAT_CHUNKS`) |
 | `rateLimitSeconds` | `number` | `2.5` | 연속 채팅 전송 간 대기 쿨다운 시간(초) (`CHAT_RATE_LIMIT_SECONDS`) |
 
-### 4) `stockSettings` (재고 및 채집 관리 규칙)
+### 4) `chatbotSettings` (챗봇 지식베이스 관리 규칙)
+| 필드명 | 타입 | 기본 예시값 | 설명 |
+| :--- | :---: | :--- | :--- |
+| `knowledgeRefreshDays` | `number` | `7` | 지식베이스 문서 유효 기간 (일). 7일 초과 시 웹 재검색 갱신 |
+| `defaultAutoRefresh` | `string` | `"yes"` | 지식 문서 자동 갱신 기본 허용 여부 (`"yes"` / `"no"`) |
+
+### 5) `stockSettings` (재고 및 채집 관리 규칙)
 | 필드명 | 타입 | 기본 예시값 | 설명 |
 | :--- | :---: | :--- | :--- |
 | `otherCharStockThreshold` | `number` | `10` | 타 캐릭터 보유 시 채집 보류 판정 임계치 (개) |
