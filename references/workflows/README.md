@@ -13,7 +13,7 @@
 | 절 | 작업 흐름명 | 문서 링크 | 핵심 요약 |
 | :---: | :--- | :--- | :--- |
 | **제1절** | **정보 저장 및 확인** | [`info_sync.md`](./info_sync.md) | 캐릭터 기본 정보, 스탯, 인벤토리/금고 CSV, 퀘스트/미션 저장 및 요약 색인 갱신 |
-| **제2절** | **채집물 재고 보충** | [`stock_gathering.md`](./stock_gathering.md) | 채집 목표치(`target_gathering.md`) 점검, 타 캐릭터 재고(10개 기준) 확인, 우선순위 정렬, 사전 점검 및 채집 |
-| **제3절** | **가공물 재고 보충** | [`stock_altering.md`](./stock_altering.md) | 가공 목표치(`target_altering.md`) 점검, 가공 시설/대기열 관리 및 결과물 수령 *(추후 워크플로우 정의)* |
-| **제4절** | **제작물 재고 보충** | [`stock_crafting.md`](./stock_crafting.md) | 제작 목표치(`target_crafting.md`) 점검, 레시피/재료 확인 및 아이템 제작 실행 *(추후 워크플로우 정의)* |
+| **제2절** | **일괄 채집 요청 (재고 보충)** | [`stock_gathering.md`](./stock_gathering.md) | 채집 목표치(`target_gathering.md`) 점검, 타 캐릭터 재고 확인, 부족분 일괄 채집 *(개별 채집 요청 아님)* |
+| **제3절** | **일괄 가공 요청 (재고 보충)** | [`stock_altering.md`](./stock_altering.md) | 가공 목표치(`target_altering.md`) 점검, 시설/대기열 등록 및 수령 *(개별 가공 요청 아님, 추후 정의)* |
+| **제4절** | **일괄 제작 요청 (재고 보충)** | [`stock_crafting.md`](./stock_crafting.md) | 제작 목표치(`target_crafting.md`) 점검, 재료 점검 및 아이템 제작 *(개별 제작 요청 아님, 추후 정의)* |
 | **제5절** | **챗봇 지식 조회 & 채팅 전달** | [`chatbot_chat.md`](./chatbot_chat.md) | 단순 발화/지식 질의 구분, 1주일 갱신 주기 관리, 50자 분할 및 최대 3개 청크 전송 |

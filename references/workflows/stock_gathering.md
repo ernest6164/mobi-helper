@@ -1,8 +1,8 @@
-# 제2절: 채집물 재고 보충 작업 흐름 (Gathering Stock Replenishment Workflow)
+# 제2절: 일괄 채집 요청 작업 흐름 (Batch Gathering Stock Replenishment Workflow)
 
 * **갱신 일시**: 2026년 10월 5일
 
-사용자가 `"재고 보충해줘"`, `"채집물 보충해줘"`, `"부족한 재료 채집해줘"`, `"나무 진액 목표치까지 모아줘"` 등의 명령을 내렸을 때 수행합니다. 세부 설정값 및 규칙은 [`references/constants.md`](../constants.md)를 준수합니다.
+사용자가 `"일괄 채집해줘"` 혹은 `"재고 보충해줘"` 등의 명령을 내렸을 때 수행합니다. **주의**: 본 워크플로우는 특정 단일 아이템만 수동 채집하는 개별 채집 요청을 수행하는 워크플로우가 아니며, `target_gathering.md`의 목표치 대비 현재 계정/캐릭터 부족분을 일괄 파악하여 보충하는 워크플로우입니다. 세부 설정값 및 규칙은 [`references/constants.md`](../constants.md)를 준수합니다.
 
 ---
 
@@ -10,7 +10,7 @@
 
 ```mermaid
 flowchart TD
-    Start["1. 채집물 재고 보충 명령 수신"] --> CheckConn["2. CLI 연결 확인 (status)"]
+    Start["1. 일괄 채집 요청 수신"] --> CheckConn["2. CLI 연결 확인 (status)"]
     CheckConn --> CheckTarget{"3. 목표치 점검 (target_gathering.md)"}
     CheckTarget -- "목표치 존재" --> CurrentStock["4. 현재 캐릭터 재고 파악 (인벤토리/금고)"]
     CheckTarget -- "목표치 없음/누락" --> SuggestTemplate{"템플릿 목표치(일괄 100개) 권유"}
