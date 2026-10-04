@@ -98,6 +98,23 @@
 
 ---
 
+### 5. `execute_altering.py` (일괄 가공 단발성 자동화)
+
+* **설명**: `target_altering.md`의 목표치 대비 전체 보유량(인벤토리 + 금고)을 분석하여 완료된 가공물을 일괄 수령하고, 빈 슬롯에 목표 미달 가공물을 우선순위(Bottom-Up 아래쪽 우선)대로 1회 대기열 등록한 뒤 종료하는 단발성 실행 스크립트입니다.
+* **사용 시점**:
+  * `"일괄 가공해줘"`, `"가공품 재고 보충해줘"` 등의 단발성 요청 시
+* **주요 매개변수**:
+  * `--data-dir` *(선택)*: 데이터 저장 경로 (기본값: `data`)
+  * `--cli-path` *(선택)*: `MabinogiMobile_CLI.exe` 경로 (미지정 시 `environments.json` 자동 탐색)
+  * `--target-file` *(선택)*: 목표 파일 경로 (기본값: `data/target_altering.md`)
+* **실행 예시**:
+  ```powershell
+  # 단발성 1회 수령 및 대기열 등록 (Bottom-Up 아래쪽 우선)
+  .venv\Scripts\python.exe scripts/execute_altering.py
+  ```
+
+---
+
 ## 3. 커스텀 스크립트 작성 안내 (`scratch/`)
 
 * 사용자 고유의 반복 매크로 작업이나 특수 필터링이 필요한 경우, `scripts/` 내의 코드를 `scratch/` 디렉토리에 복사하여 자유롭게 수정해 사용하십시오.

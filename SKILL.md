@@ -30,7 +30,7 @@ description: >-
 | :--- | :--- | :--- |
 | **정보 저장 및 동기화** | `"캐릭터 정보 저장해줘"`, `"동기화해줘"`, `"인벤토리 갱신해줘"` | [`references/workflows/info_sync.md`](./references/workflows/info_sync.md) |
 | **일괄 채집 요청** | `"일괄 채집해줘"`, `"재고 보충해줘"`<br>*(※ 개별 채집 요청을 수행하는 워크플로우가 아님)* | [`references/workflows/stock_gathering.md`](./references/workflows/stock_gathering.md) |
-| **일괄 가공 요청** | `"일괄 가공해줘"`<br>*(※ 개별 가공 요청을 수행하는 워크플로우가 아님)* | [`references/workflows/stock_altering.md`](./references/workflows/stock_altering.md) *(추후 워크플로우 정의)* |
+| **일괄 가공 요청** | `"일괄 가공해줘"`<br>*(※ 개별 가공 요청을 수행하는 워크플로우가 아님)* | [`references/workflows/stock_altering.md`](./references/workflows/stock_altering.md) |
 | **일괄 제작 요청** | `"일괄 제작해줘"`<br>*(※ 개별 제작 요청을 수행하는 워크플로우가 아님)* | [`references/workflows/stock_crafting.md`](./references/workflows/stock_crafting.md) *(추후 워크플로우 정의)* |
 | **챗봇 지식 & 인게임 채팅** | `"모비에 안녕하세요 라고 말해줘"`, `"모비에 ~공략 말해줘"`, `"모비에서 채팅으로 쳐줘"` | [`references/workflows/chatbot_chat.md`](./references/workflows/chatbot_chat.md) |
 | **기타 인게임 액션** | `"악보 연주해줘"`, `"소셜 액션 해줘"`, `"상태 확인해줘"` | [`references/cli_guide.md`](./references/cli_guide.md) |
