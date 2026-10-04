@@ -89,6 +89,7 @@ Windows 콘솔(CP949 등) 환경의 인코딩 문제로 인해, 한국어가 포
   * *예시*: `"안녕"` -> UTF-8 Bytes -> Base64(`7JWI64WV`) -> `MabinogiMobile_CLI write_chat base64:7JWI64WV`
 * **출력 시**: 응답받은 JSON 내부의 한글은 `\uXXXX` 형태의 유니코드 이스케이프로 출력됩니다. 표준 JSON 파서(`json.loads()` 등)로 파싱하면 자동으로 온전한 한글 텍스트로 변환됩니다.
   * `%LOCALAPPDATA%\MabinogiMobileCLI\last-response.json` 파일에서 직전 명령어의 순수 UTF-8 결과를 바로 읽어올 수도 있습니다.
+* **응답 저장 원칙**: CLI 명령어 실행에 대한 응답 결과는 항상 `scratch/<명령어>.json` 형태로 저장·관리합니다.
 
 ---
 

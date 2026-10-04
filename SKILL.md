@@ -16,8 +16,9 @@ description: >-
 
 1. **연결 상태 점검**: `data/environments.json`의 CLI 경로를 확인하고 `<CLI경로> status` 실행 (`{"pipe":"connected"}` 확인). 연결 끊김 시 인게임 AI 제어 옵션 확인 요청.
 2. **한글/비-ASCII 인코딩**: 한글 파라미터나 JSON Body는 반드시 **UTF-8 Base64**로 인코딩하여 `base64:<Base64문자열>` 형태로 CLI에 전달.
-3. **유연한 실행 방식**: CLI 도구 직접 호출(`write_chat base64:...`) 또는 공용 파이썬 스크립트(`scripts/`) 중 작업에 적합한 방식을 자유롭게 선택하여 실행.
-4. **사용자 정의 규칙 우선**: `data/workflows_custom.md`가 존재하면 기본 워크플로우보다 최우선 적용.
+3. **명령어 응답 저장**: CLI 명령어 실행에 대한 응답 결과는 항상 `scratch/<명령어>.json` 형태로 저장.
+4. **유연한 실행 방식**: CLI 도구 직접 호출(`write_chat base64:...`) 또는 공용 파이썬 스크립트(`scripts/`) 중 작업에 적합한 방식을 자유롭게 선택하여 실행.
+5. **사용자 정의 규칙 우선**: `data/workflows_custom.md`가 존재하면 기본 워크플로우보다 최우선 적용.
 
 ---
 
