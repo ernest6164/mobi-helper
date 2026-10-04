@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
+r"""
 sync_character.py - 캐릭터 전체 상태, 인벤토리/금고 CSV, 퀘스트/미션 동기화 공용 스크립트
 
 사용 예시:

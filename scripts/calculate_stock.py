@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
+r"""
 calculate_stock.py - 재고 현황 계산 및 부족분 산출 공용 스크립트
 
 기능:

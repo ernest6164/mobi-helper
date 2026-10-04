@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
+r"""
 send_chat.py - 마비노기 모바일 인게임 채팅(write_chat) 안전 전송 공용 스크립트
 
 기능:

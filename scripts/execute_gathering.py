@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
+r"""
 execute_gathering.py - 재고 보충 자동 채집 실행 및 모니터링 공용 스크립트
 
 기능:
