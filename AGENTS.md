@@ -14,7 +14,7 @@
   * 도구의 위치는 동적 탐색 또는 `data/path.txt`와 같은 설정 파일을 통해 참조하도록 추상화하여 관리합니다.
 * **스킬 기반 모듈 아키텍처**:
   * 메인 워크플로우 및 실행 지침: [`SKILL.md`](./SKILL.md)
-  * 상세 작업 흐름 (저장/동기화 & 재고 보충): [`references/workflows.md`](./references/workflows.md)
+  * 상세 작업 흐름 (동기화, 재고 보충, 챗봇 지식): [`references/workflows.md`](./references/workflows.md)
   * CLI 가이드 및 API 명세: [`references/cli_guide.md`](./references/cli_guide.md)
   * 데이터 관리 원칙: [`references/data_management.md`](./references/data_management.md)
   * 전역 상수 및 설정 정의: [`references/constants.md`](./references/constants.md)

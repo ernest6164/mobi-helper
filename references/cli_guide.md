@@ -70,7 +70,7 @@ MabinogiMobile_CLI <명령어> [JSON 본문]
 * `execute_crafting`: 아이템 제작 실행 (해당 시설로 이동 및 결과물 수령 포함)
 
 ### 4.3. 소셜 및 액션 (Social & Actions)
-* `write_chat`: 채팅 메시지 전송
+* `write_chat`: 채팅 메시지 전송 (최대 50자, 연속 전송 시 최소 2초 대기)
 * `get_social_actions`: 사용 가능한 소셜 행동(모션) 및 표정 목록 조회
 * `get_music_scores`: 보유 중인 악보 목록 조회
 * `play_music_score`: 악보 연주 시작

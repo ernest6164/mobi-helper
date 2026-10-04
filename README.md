@@ -35,23 +35,28 @@ mobi-helper/
 ├── README.md                # 스킬 소개, 지원 명령어 및 디렉토리 구조 안내
 ├── AGENTS.md                # 워크스페이스 기본 운영 지침
 ├── references/              # 온디맨드 세부 참고 문서
-│   ├── workflows.md         # 1. 정보 저장/확인 및 2. 재고 보충 상세 작업 흐름
+│   ├── workflows.md         # 동기화, 재고 보충, 챗봇 지식 전달 상세 작업 흐름
 │   ├── cli_guide.md         # CLI 통신 프로토콜, Capabilities 및 UTF-8 Base64 규칙
 │   ├── data_management.md   # 캐릭터 정합성 관리 원칙 및 파일 명명 규칙
 │   ├── constants.md         # 시스템 전역 설정값, 기본값 및 임계치 상수 명세
 │   ├── templates.md         # data/ 생성 파일들의 표준 작성 템플릿
 │   └── appendix.md          # CSV 뷰어, 스크립트 작성 팁, Git 및 특정 에이전트 환경 설정 가이드
 ├── data/                    # 운영 중 생성/관리되는 데이터 (Git 제외)
-│   ├── workflows_custom.md  # 사용자 정의 특수 규칙 (존재 시 최우선 적용)
-│   ├── characters.md
-│   ├── (서버명)_(캐릭터명).md
-│   ├── (서버명)_(캐릭터명)_inventory.csv
-│   ├── (서버명)_(캐릭터명)_bank.csv
-│   ├── (서버명)_bank_all.csv
-│   ├── (서버명)_(캐릭터명)_quest.md
-│   ├── target.md
-│   ├── recipes.csv
-│   └── path.txt
+│   ├── workflows_custom.md  # 사용자 정의 특수 규칙 (API 응답 다음 2순위 적용)
+
+│   ├── target.md            # 채집 목표 수량 설정 문서
+│   ├── recipes.csv          # 가공/제작 레시피 데이터베이스
+│   ├── path.txt             # CLI 실행 경로
+│   ├── characters/          # 캐릭터 관련 모든 정보 디렉토리
+│   │   ├── README.md        # 계정 내 전체 캐릭터 요약 색인 시트 (구 characters.md)
+│   │   ├── (서버명)_(캐릭터명).md
+│   │   ├── (서버명)_(캐릭터명)_inventory.csv
+│   │   ├── (서버명)_(캐릭터명)_bank.csv
+│   │   ├── (서버명)_bank_all.csv
+│   │   └── (서버명)_(캐릭터명)_quest.md
+│   └── chatbot/             # 챗봇 지식베이스 디렉토리
+│       ├── README.md        # 지식 문서 전체 색인(Index) 및 태그 목록
+│       └── (주제명).md      # 개별 공략 및 가이드 지식 문서
 └── scratch/                 # 일회성 임시 스크립트 디렉토리 (Git 제외)
 ```
 
@@ -60,7 +65,7 @@ mobi-helper/
 ## 📚 관련 문서 안내
 
 * [`SKILL.md`](./SKILL.md): 스킬 진입점 및 메인 워크플로우
-* [`references/workflows.md`](./references/workflows.md): 상세 표준 작업 흐름 (저장/확인 & 재고 보충)
+* [`references/workflows.md`](./references/workflows.md): 상세 표준 작업 흐름 (동기화, 재고 보충, 챗봇 지식)
 * [`references/cli_guide.md`](./references/cli_guide.md): AI 커넥터 CLI 연동 및 명령어 명세
 * [`references/data_management.md`](./references/data_management.md): 데이터 관리 원칙
 * [`references/constants.md`](./references/constants.md): 시스템 전역 상수 정의
