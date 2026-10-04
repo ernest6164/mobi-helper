@@ -101,11 +101,11 @@ def sync_character(char_name, cli_path, data_dir):
 
     for it in item_list:
         loc = it.get("Location", "")
-        if loc == "inventory":
+        if loc in ("inventory", "bag", "gathered", "cooked"):
             inv_items.append(it)
-        elif loc == "bank":
+        elif loc in ("character_storage", "bank"):
             bank_items.append(it)
-        elif loc in ("account_bank", "bank_all"):
+        elif loc in ("account_storage", "account_bank", "bank_all"):
             bank_all_items.append(it)
 
     fieldnames = ["Location", "DisplayName", "Category", "CategoryDisplayName", "Count", "IsLocked"]
