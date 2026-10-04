@@ -10,13 +10,20 @@
 
 ```mermaid
 flowchart TD
-    Start["1. 정보 저장/확인 명령 수신"] --> CheckConn["2. CLI 도구 및 연결 상태 확인 (status)"]
-    CheckConn --> AskChar["3. 현재 접속 캐릭터명 확인 요청 (필수)"]
-    AskChar --> FetchAllState["4. 캐릭터 전체 상태 조회 (환경, 스탯, 재화, 무게, 활동)"]
+    Start["1. 정보 저장/동기화 명령 수신"] --> CheckConn["2. CLI 도구 및 연결 상태 확인 (status)"]
+    CheckConn --> HasName{"3. 명령에 캐릭터명이 포함되었는가?"}
+    HasName -- "예 (명시됨)" --> SetChar["명시된 캐릭터명으로 확정"]
+    HasName -- "아니오 (미포함)" --> AskActive["activeCharacter 맞는지 사용자에게 가볍게 확인 질문"]
+    AskActive --> UserReply{"사용자 응답"}
+    UserReply -- "긍정/진행 (응, 맞아, 진행해)" --> UseActive["저장된 activeCharacter로 확정"]
+    UserReply -- "새 캐릭터명 제공" --> SetNewChar["새로 제공된 캐릭터명으로 확정"]
+    SetChar --> FetchAllState["4. 캐릭터 전체 상태 조회 (환경, 스탯, 재화, 무게, 활동)"]
+    UseActive --> FetchAllState
+    SetNewChar --> FetchAllState
     FetchAllState --> FetchItems["5. 전체 아이템 및 금고 내역 수집 (get_items)"]
     FetchItems --> FetchQuests["6. 퀘스트 및 일일/주간 미션 수집 (get_quests, missions)"]
-    FetchQuests --> WriteFiles["7. data/characters/ 하위 파일 작성 및 덮어쓰기 (*.md, *.csv)"]
-    WriteFiles --> UpdateSummary["8. 통합 요약 색인 갱신 (data/characters/README.md)"]
+    FetchQuests --> WriteFiles["7. data/characters/ 하위 파일 작성 (*.md, *.csv)"]
+    WriteFiles --> UpdateSummary["8. 통합 요약 색인 및 environments.json 갱신"]
     UpdateSummary --> CheckConsistency{"9. 계정 내 캐릭터 정합성 점검"}
     CheckConsistency -- "미등록 캐릭터 존재" --> SuggestSwitch["다른 캐릭터 접속 및 갱신 권장 안내"]
     CheckConsistency -- "전체 일치" --> Finish["동기화 완료 및 요약 보고"]
@@ -30,8 +37,16 @@ flowchart TD
 1. **CLI 경로 및 연결 상태 점검**:
    * `data/environments.json`의 `paths.cli` 확인 후 없으면 로컬 탐색하여 기록합니다.
    * `MabinogiMobile_CLI status`를 실행하여 `{"pipe":"connected"}` 상태인지 확인합니다.
-2. **접속 캐릭터명 확인 (필수)**:
-   * **(중요)** 커넥터 API는 현재 접속 중인 캐릭터의 닉네임을 반환하지 않으므로, 항상 **사용자에게 현재 접속 중인 캐릭터명이 무엇인지 확인 요청**합니다.
+2. **접속 캐릭터명 식별 및 확인 절차 (필수)**:
+   * **(원칙)** 커넥터 API는 현재 접속 중인 캐릭터의 닉네임을 반환하지 않습니다.
+   * **분기 1: 사용자가 캐릭터명을 명시한 경우** (`"아미나 정보 갱신해줘"` 등):
+     * 추가 질문 없이 사용자가 지정한 캐릭터명으로 즉시 확정하여 동기화를 진행합니다.
+   * **분기 2: 사용자가 캐릭터명을 명시하지 않은 경우** (`"정보 갱신해줘"` 등):
+     * `data/environments.json`의 `activeCharacter`를 읽고 사용자에게 확인 질문을 합니다:
+       > *"현재 접속 중인 캐릭터가 '[activeCharacter]'가 맞으신가요? (맞으시면 그대로 진행하며, 다른 캐릭터라면 이름을 알려주세요.)"*
+     * 사용자가 긍정/진행 승인(`"응"`, `"맞아"`, `"진행해"` 등)을 하면 저장된 `activeCharacter`를 그대로 따릅니다.
+     * 사용자가 새로운 캐릭터명을 명시해주면 해당 캐릭터명으로 확정합니다.
+   * 동기화 완료 시 `data/environments.json`의 `activeCharacter`를 확정된 캐릭터명으로 최신화합니다.
 3. **캐릭터 전체 상태 및 환경 정보 조회**:
    * `get_current_environment`: 현재 위치, 날씨, 인게임 시간 확인
    * `get_my_info`: 캐릭터 기본 정보, 스탯(전투력, 생활력, 매력, 데코 점수), 현재 체력(HP) 확인

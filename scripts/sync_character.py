@@ -262,6 +262,21 @@ def sync_character(char_name, cli_path, data_dir):
         with open(readme_path, "w", encoding="utf-8") as f:
             f.writelines(new_lines)
 
+    # 6. data/environments.json activeCharacter 갱신
+    env_file = os.path.join(data_dir, "environments.json")
+    if os.path.exists(env_file):
+        try:
+            with open(env_file, "r", encoding="utf-8") as f:
+                env_json = json.load(f)
+            if "inGame" not in env_json:
+                env_json["inGame"] = {}
+            env_json["inGame"]["activeCharacter"] = char_name
+            env_json["inGame"]["defaultServer"] = server_name
+            with open(env_file, "w", encoding="utf-8") as f:
+                json.dump(env_json, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"[*] environments.json 갱신 실패 (무시됨): {e}", file=sys.stderr)
+
     print(f"[+] [{char_name}] 캐릭터 동기화 완료: 전투력 {combat_score}, 생활력 {living_score}")
     return True
 

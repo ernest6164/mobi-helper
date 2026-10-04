@@ -57,7 +57,19 @@ description: >-
 
 사용자가 `"현재 캐릭터 정보 저장해줘"`, `"정보 동기화해줘"`, `"상태 확인해줘"`, `"인벤토리 갱신해줘"` 등의 명령을 내렸을 때 수행합니다.
 
-1. **접속 캐릭터명 확인**: 사용자에게 현재 접속 중인 캐릭터 이름을 확인 요청합니다. *(API 미제공)*
+> [!IMPORTANT]
+> **캐릭터명 식별 및 확인 절차 (Character Name Resolution Rule)**:
+> 마비노기 모바일 AI 커넥터 API(`get_my_info` 등)는 캐릭터 닉네임을 반환하지 않으므로, 아래 2가지 분기에 따라 캐릭터명을 확정합니다:
+> 1. **사용자가 캐릭터명을 명시한 경우** (`"아미나 정보 갱신해줘"` 등):
+>    * 추가 질문 없이 사용자가 지정한 캐릭터명을 기준으로 즉시 동기화를 수행합니다.
+> 2. **사용자가 캐릭터명을 명시하지 않은 경우** (`"정보 갱신해줘"`, `"현재 캐릭터 저장해줘"` 등):
+>    * `data/environments.json`의 `activeCharacter`를 확인하고, 사용자에게 현재 접속 캐릭터가 해당 캐릭터가 맞는지 가볍게 확인 질문합니다.
+>      *(질문 예시: "현재 접속 중인 캐릭터가 '[activeCharacter]'가 맞으신가요? 맞으시면 그대로 진행하며, 다른 캐릭터라면 이름을 말씀해 주세요.")*
+>    * **사용자 응답에 따른 처리**:
+>      * 사용자가 긍정/진행 승인(`"응"`, `"맞아"`, `"진행해"` 등)을 한 경우: 저장된 `activeCharacter`를 기준으로 동기화 진행
+>      * 사용자가 새로운 캐릭터명을 알려준 경우: 해당 명시된 캐릭터명을 기준으로 동기화 진행
+
+1. **접속 캐릭터명 확정**: 상기 규칙에 따라 확정된 캐릭터명 지정
 2. **캐릭터 전체 상태 및 환경 수집**: `get_current_environment`, `get_my_info`, `get_currencies`, `get_inventory`, `get_activity` 호출 → `data/characters/(서버)_(캐릭터).md` 작성/갱신
 3. **인벤토리 및 보관함 수집**: `get_items` 호출 →
    * `data/characters/(서버)_(캐릭터)_inventory.csv` (가방)
@@ -65,7 +77,9 @@ description: >-
    * `data/characters/(서버)_bank_all.csv` (서버 공용 금고)
    * `data/characters/(서버)_(캐릭터).md` 내 CSV 갱신 일시 기록
 4. **퀘스트 및 미션 수집**: `get_quests`, `get_daily_missions`, `get_weekly_missions` 호출 → `data/characters/(서버)_(캐릭터)_quest.md` 작성/갱신
-5. **통합 요약 갱신**: `data/characters/README.md` 색인 시트에 해당 캐릭터 행 추가 및 갱신
+5. **통합 요약 및 환경 설정 갱신**: `data/characters/README.md` 색인 시트 갱신 및 `data/environments.json`의 `activeCharacter`를 확정된 캐릭터명으로 갱신
+
+
 
 ---
 
