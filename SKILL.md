@@ -34,8 +34,6 @@ description: >-
 | **일괄 가공 요청**<br>*(⚠️ 시험적 기능)* | `"일괄 가공해줘"`<br>*(시작 전 정상 동작하지 않을 수 있음을 고지하고 승인 필요)* | [`references/workflows/stock_altering.md`](./references/workflows/stock_altering.md) |
 | **생활 스킬 집중 육성**<br>*(⚠️ 시험적 기능)* | `"생활 노가다 알아서 해줘"`, `"생활 스킬 레벨 올리자"`, `"생활 스킬 레벨 올려줘"`<br>*(시작 전 정상 동작하지 않을 수 있음을 고지하고 승인 필요)* | [`references/workflows/life_skill_leveling.md`](./references/workflows/life_skill_leveling.md) |
 | **챗봇 지식 & 인게임 채팅** | `"모비에 안녕하세요 라고 말해줘"`, `"모비에 ~공략 말해줘"`, `"모비에서 채팅으로 쳐줘"` | [`references/workflows/chatbot_chat.md`](./references/workflows/chatbot_chat.md) |
-
-
 | **기타 인게임 액션** | `"악보 연주해줘"`, `"소셜 액션 해줘"`, `"상태 확인해줘"` | [`references/cli_guide.md`](./references/cli_guide.md) |
 
 ---
