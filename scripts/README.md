@@ -98,20 +98,50 @@
 
 ---
 
-### 5. `execute_altering.py` (일괄 가공 단발성 자동화)
+### 5. `execute_altering.py` (일괄 가공 단발성 자동화) *(⚠️ 시험적 기능)*
 
+* **주의**: **시험적 기능(Experimental)**입니다. 시설 대기열 및 인게임 환경에 따라 정상 동작하지 않을 수 있으므로 실행 전 사용자 승인이 필수입니다.
 * **설명**: `target_altering.md`의 목표치 대비 전체 보유량(인벤토리 + 금고)을 분석하여 완료된 가공물을 일괄 수령하고, 빈 슬롯에 목표 미달 가공물을 우선순위(Bottom-Up 아래쪽 우선)대로 1회 대기열 등록한 뒤 종료하는 단발성 실행 스크립트입니다.
 * **사용 시점**:
   * `"일괄 가공해줘"`, `"가공품 재고 보충해줘"` 등의 단발성 요청 시
 * **주요 매개변수**:
+  * `--confirm` *(선택)*: 시험적 기능 고지 확인 및 진행 승인 플래그
   * `--data-dir` *(선택)*: 데이터 저장 경로 (기본값: `data`)
   * `--cli-path` *(선택)*: `MabinogiMobile_CLI.exe` 경로 (미지정 시 `environments.json` 자동 탐색)
   * `--target-file` *(선택)*: 목표 파일 경로 (기본값: `data/target_altering.md`)
 * **실행 예시**:
   ```powershell
   # 단발성 1회 수령 및 대기열 등록 (Bottom-Up 아래쪽 우선)
-  .venv\Scripts\python.exe scripts/execute_altering.py
+  .venv\Scripts\python.exe scripts/execute_altering.py --confirm
   ```
+
+---
+
+### 6. `execute_life_leveling.py` (1시간 생활 스킬 집중 육성 순환 루프) *(⚠️ 시험적 기능)*
+
+* **주의**: **시험적 기능(Experimental)**입니다. 1시간 동안 복합 순환 제어가 진행되므로 시작 전 사용자에게 정상 동작하지 않을 수 있음을 고지하고 진행 승인을 받아야 합니다.
+* **설명**: 집중 육성할 스킬군(목공, 대장, 방직, 약품, 요리 등)에 맞춰 최단 시간 1차 가공물을 선정하고, 1시간(60분) 동안 [완료 가공물 수령 ➔ 최단 시간 가공 등록 ➔ 연계 제작 ➔ 원자재 보충 채집]을 무인 자동 순환하여 생활 스킬 레벨과 생활력을 극대화합니다.
+* **사용 시점**:
+  * `"생활 노가다 알아서 해줘"`, `"생활 스킬 레벨 올리자"`, `"생활 스킬 레벨 올려줘"` 요청 시
+* **주요 매개변수**:
+  * `--confirm` *(선택)*: 시험적 기능 고지 확인 및 진행 승인 플래그
+  * `--char-name` *(선택)*: 현재 캐릭터명 (기본값: `environments.json`의 `activeCharacter`)
+  * `--server` *(선택)*: 서버명 (기본값: `던컨`)
+  * `--focus-skill` *(선택)*: 집중 육성 스킬군 (`목공`, `대장`, `방직`, `약품`, `요리`, `균형`, 기본값: `균형`)
+  * `--skill-level` *(선택)*: 현재 생활 스킬 레벨 (기본값: `1`)
+  * `--duration-minutes` *(선택)*: 세션 진행 시간 (기본값: `60`분)
+  * `--check-only` *(선택)*: 사전 조건(연결 상태, 인벤토리 무게, 가공 대기열 현황) 점검만 수행 후 종료
+  * `--cli-path` *(선택)*: `MabinogiMobile_CLI.exe` 경로
+* **실행 예시**:
+  ```powershell
+  # 사전 조건 점검만 수행
+  .venv\Scripts\python.exe scripts/execute_life_leveling.py --check-only
+
+  # 목공 집중 1시간 수련 루프 실행 (사전 승인 플래그 포함)
+  .venv\Scripts\python.exe scripts/execute_life_leveling.py --focus-skill 목공 --duration-minutes 60 --confirm
+  ```
+
+
 
 ---
 

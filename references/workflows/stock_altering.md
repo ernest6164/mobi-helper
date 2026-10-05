@@ -1,10 +1,14 @@
 # 제3절: 일괄 가공 요청 작업 흐름 (Batch Altering Stock Replenishment Workflow)
 
-* **상태**: ✅ 워크플로우 명세 정의 완료
+* **상태**: ⚠️ 시험적 기능 (Experimental)
 * **갱신 일시**: 2026년 10월 5일
 
 사용자가 `"일괄 가공해줘"` 등의 명령을 내렸을 때 수행되는 **단발성 가공 자동화 워크플로우**입니다.  
 **주의**: 본 워크플로우는 특정 단일 아이템만 수동 가공하는 개별 가공 요청을 수행하는 워크플로우가 아니며, `target_altering.md`의 목표치 대비 부족분을 일괄 점검하여 완료된 작업물을 수령하고 빈 대기열에 새 가공물을 1회 등록한 뒤 종료하는 워크플로우입니다.
+
+> [!WARNING]
+> **시험적 기능 고지 및 사전 승인 필수 (Experimental Feature)**:  
+> 본 워크플로우는 **시험적 기능(Experimental)**입니다. 인게임 가공 시설 상태, 대기열 점유 상황, 네트워크 환경에 따라 정상 동작하지 않을 수 있습니다. **반드시 작업 시작 전단계에서 사용자에게 시험적 기능임을 고지하고, 진행 승인(동의)을 받은 후에만 후속 절차를 진행해야 합니다.**
 
 ---
 
@@ -13,18 +17,20 @@
 ```mermaid
 flowchart TD
     Start["1. 일괄 가공 요청 수신 ('일괄 가공해줘')"] --> CheckConn["2. CLI 연결 확인 (status)"]
-    CheckConn --> CheckTarget["3. 가공 재고 목표치 점검 (target_altering.md)"]
-    CheckTarget --> CheckStock["4. 전체 보유량 파악 (인벤토리 + 금고)"]
+    CheckConn --> WarnExp{"3. [필수] 시험적 기능 고지 및 진행 승인 요청"}
+    WarnExp -- "승인 거부/보류" --> StopWork["작업 중단 및 안내"]
+    WarnExp -- "진행 승인" --> CheckTarget["4. 가공 재고 목표치 점검 (target_altering.md)"]
+    CheckTarget --> CheckStock["5. 전체 보유량 파악 (인벤토리 + 금고)"]
     CheckStock --> FindCandidates{"부족분(후보군) 존재 여부<br>(보유량 < 목표치)"}
     
     FindCandidates -- "부족분 없음" --> AllSufficient["가공 불필요 알림 후 종료"]
-    FindCandidates -- "후보군 도출" --> SortPriority["5. 우선순위 결정 (목록 아래쪽 우선, Bottom-Up)"]
+    FindCandidates -- "후보군 도출" --> SortPriority["6. 우선순위 결정 (목록 아래쪽 우선, Bottom-Up)"]
     
-    SortPriority --> CollectWorks["6. 완료된 가공물 수령 (complete_altering_work)"]
-    CollectWorks --> CheckQueue["7. 대기열 상태 확인 (get_altering_works)"]
-    CheckQueue --> RegisterWorks["8. 빈 슬롯에 후보 가공물 등록 (execute_altering)"]
+    SortPriority --> CollectWorks["7. 완료된 가공물 수령 (complete_altering_work)"]
+    CollectWorks --> CheckQueue["8. 대기열 상태 확인 (get_altering_works)"]
+    CheckQueue --> RegisterWorks["9. 빈 슬롯에 후보 가공물 등록 (execute_altering)"]
     
-    RegisterWorks --> SyncAndReport["9. 데이터 동기화 및 결과 보고"]
+    RegisterWorks --> SyncAndReport["10. 데이터 동기화 및 결과 보고"]
     SyncAndReport --> Finish["종료"]
 ```
 
@@ -32,13 +38,21 @@ flowchart TD
 
 ## 2. 세부 실행 절차
 
-### 1단계: 명령 수신 및 연결 점검
+### 1단계: 명령 수신, 연결 점검 및 시험적 기능 사전 승인
 * 사용자가 `"일괄 가공해줘"`, `"가공품 채워줘"`, `"가공 재고 보충해줘"` 등의 명령을 내리면 본 워크플로우를 단발성으로 트리거합니다.
 * `MabinogiMobile_CLI status`로 인게임 클라이언트 연결 상태(`{"pipe":"connected"}`)를 확인합니다.
+* **⚠️ 시험적 기능 사전 고지 및 승인 (필수)**:
+  * 사용자에게 다음과 같이 명확히 안내하고 진행 여부를 확인합니다:  
+    > *"일괄 가공 기능은 현재 **시험적 기능(Experimental)**으로 제공되고 있어, 게임 내 시설 상태나 대기열 상황에 따라 정상 동작하지 않을 수 있습니다. 계속 진행하시겠습니까?"*
+  * 사용자가 긍정/승인(`"진행해"`, `"응"`, `"계속해"` 등)한 경우에만 2단계로 이동하며, 거부 시 작업을 안전하게 종료합니다.
 
-### 2단계: 가공 목표치 점검
-* `data/target_altering.md` 문서를 읽어 가공 결과물별 목표 수량을 점검합니다.
+### 2단계: 가공 목표치 점검 및 자연어 예외 규정 해석
+* `data/target_altering.md` 문서를 읽어 가공 결과물별 목표 수량 및 자연어로 기술된 조건부 예외 규칙을 종합적으로 해석합니다.
   * 목표치 문서가 없거나 누락된 경우 템플릿([`references/templates/target_altering.md`](../templates/target_altering.md)) 적용 여부를 사용자에게 확인합니다.
+  * **자연어 해석 및 유연한 재산정 원칙**:
+    * 본 문서는 도표 형태가 아닌 자연어(불릿 리스트 및 서술형 문장)로 관리됩니다.
+    * 에이전트는 문서에 명시된 기본 목표치뿐만 아니라, **"조건부 예외 및 특수 운영 규칙"에 자연어로 기술된 조건(예: 원자재 부족 시 대체 가공, 특정 상황 생산 우선순위, 무게 한도에 따른 보류 등)을 지능적으로 해석하여 가공할 대상을 적절히 재산정**합니다.
+
 
 ### 3단계: 전체 보유량 파악 및 후보군 도출
 * 현재 캐릭터의 인벤토리(`_inventory.csv`), 개인 금고(`_bank.csv`), 계정 공용 금고(`_bank_all.csv`)를 합산하여 각 가공품의 전체 보유량을 파악합니다.

@@ -20,9 +20,11 @@ import base64
 import datetime
 import json
 import os
+import re
 import subprocess
 import sys
 import time
+
 
 if sys.platform == "win32":
     try:
@@ -101,19 +103,57 @@ def run_cli_cmd(cli_path, cmd, body=None, data_dir="data"):
 def load_target_altering(target_file):
     targets = []
     if not os.path.exists(target_file):
-        return targets
+        return targets, []
+
+    exceptions = []
+    current_category = "기타 가공 시설"
+    in_exception_section = False
+
     with open(target_file, "r", encoding="utf-8") as f:
         for line in f:
-            line = line.strip()
-            if line.startswith("|") and not line.startswith("| :---") and not line.startswith("| 카테고리"):
-                parts = [p.strip() for p in line.split("|")[1:-1]]
+            stripped = line.strip()
+            if not stripped:
+                continue
+
+            # 헤더 섹션 판별
+            if stripped.startswith("#"):
+                h = stripped.lstrip("#").strip()
+                if "예외" in h or "규칙" in h or "지침" in h and "기본" not in h:
+                    in_exception_section = True
+                elif "목표" in h or "시설" in h or "가공" in h:
+                    in_exception_section = False
+                    if "시설" in h or "가공" in h:
+                        current_category = h
+                continue
+
+            # 예외 규칙 섹션 내용 수집
+            if in_exception_section:
+                if stripped.startswith("-") or stripped.startswith("*"):
+                    rule_text = stripped.lstrip("-*•").strip()
+                    if rule_text:
+                        exceptions.append(rule_text)
+                continue
+
+            # 1. 기존 마크다운 표 포맷 호환
+            if stripped.startswith("|") and not stripped.startswith("| :---") and not stripped.startswith("| 카테고리"):
+                parts = [p.strip() for p in stripped.split("|")[1:-1]]
                 if len(parts) >= 3:
                     cat, item_name, count_str = parts[0], parts[1], parts[2]
                     try:
                         targets.append((cat, item_name, int(count_str)))
                     except ValueError:
                         pass
-    return targets
+                continue
+
+            # 2. 자연어 불릿 및 텍스트 포맷 (예: '- 철괴: 30개', '* 목재: 30')
+            m = re.match(r"^[-*•]?\s*([가-힣a-zA-Z0-9+() ]+?)\s*[:：=]?\s*(\d+)\s*(?:개)?$", stripped)
+            if m:
+                item_name = m.group(1).strip()
+                count = int(m.group(2))
+                targets.append((current_category, item_name, count))
+
+    return targets, exceptions
+
 
 
 def get_current_stock(cli_path, data_dir):
@@ -289,11 +329,18 @@ def register_alterable_works(cli_path, data_dir, shortages, max_facility_slots=7
 
 
 def main():
-    parser = argparse.ArgumentParser(description="마비노기 모바일 일괄 가공 단발성 자동화 스크립트")
+    parser = argparse.ArgumentParser(description="마비노기 모바일 일괄 가공 단발성 자동화 스크립트 (⚠️ 시험적 기능)")
     parser.add_argument("--data-dir", default="data", help="데이터 디렉토리 경로")
     parser.add_argument("--cli-path", default=None, help="MabinogiMobile_CLI.exe 경로")
     parser.add_argument("--target-file", default=None, help="목표치 파일 경로 (기본값: data/target_altering.md)")
+    parser.add_argument("--confirm", action="store_true", help="시험적 기능 고지 확인 및 진행 승인 플래그")
     args = parser.parse_args()
+
+    print("=" * 70)
+    print("⚠️ [시험적 기능 안내 (Experimental Feature)]")
+    print("본 '일괄 가공' 기능은 시험적 기능으로, 게임 내 시설 상태나 대기열 상황에 따라")
+    print("정상 동작하지 않을 수 있습니다. 반드시 사전 승인 후 사용하십시오.")
+    print("=" * 70)
 
     cli_path = resolve_cli_path(args.cli_path, args.data_dir)
     print(f"[*] CLI 경로: {cli_path}")
@@ -305,6 +352,7 @@ def main():
         sys.exit(1)
     print("[+] CLI 파이프 연결 정상 확인 (pipe: connected)")
 
+
     # 2. 현재 캐릭터 확인
     my_info = run_cli_cmd(cli_path, "get_my_info", data_dir=args.data_dir)
     char_name = my_info.get("Name") or my_info.get("CharacterName") or my_info.get("character_name") or "알 수 없음"
@@ -312,9 +360,14 @@ def main():
 
     # 3. 목표치 로드
     target_file = args.target_file or os.path.join(args.data_dir, "target_altering.md")
-    targets = load_target_altering(target_file)
-    print(f"[+] 가공 목표치 항목: 총 {len(targets)}개 로드 완료")
+    targets, exceptions = load_target_altering(target_file)
+    print(f"[+] 가공 목표치 항목: 총 {len(targets)}개 로드 완료 (자연어 포맷 지원)")
+    if exceptions:
+        print(f"[*] 자연어 조건부 예외 규칙 {len(exceptions)}건 감지:")
+        for ex in exceptions:
+            print(f"    - {ex}")
     print("[*] 실행 모드: 단발성(1회), 우선순위 규칙: Bottom-Up (목록 아래쪽 우선)")
+
 
     total_collected_items = {}
     print("\n================ [일괄 가공 단발성 실행] ================")

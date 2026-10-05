@@ -44,4 +44,17 @@
 | `KNOWLEDGE_REFRESH_DAYS` | `7` | 지식베이스 문서 유효 기간 (일 단위). 최종 갱신일로부터 1주일(7일) 초과 시 웹 기반 재검색 갱신 수행 |
 | `DEFAULT_KNOWLEDGE_AUTO_REFRESH` | `'yes'` | 지식 문서별 자동 갱신 기본 허용 여부 (`'yes'` / `'no'`). `'no'` 설정 시 1주일이 경과해도 웹 조사를 생략하고 기존 내용으로 답변 |
 
+---
+
+## 5. 생활 스킬 집중 육성 관련 상수 (Life Skill Leveling)
+
+| 상수명 | 기본값 / 설정값 | 설명 |
+| :--- | :---: | :--- |
+| `DEFAULT_LIFE_SESSION_MINUTES` | `60` | 생활 스킬 집중 육성 기본 세션 진행 시간 (분 단위) |
+| `LIFE_LOOP_CYCLE_SECONDS` | `180` | 생활 수련(수령-가공-제작-채집) 1회 순환 기본 주기 (초 단위, 약 3분) |
+| `LIFE_WEIGHT_SAFETY_RATIO` | `0.95` | 채집 중단 및 소모 제작 전환 기준 인벤토리 안전 무게 비율 (95%) |
+| `SHORT_ALTERING_THRESHOLD_SECONDS` | `300` | 최단 시간 우선 가공물 판정 임계치 (소요 시간 5분/300초 이하 가공물 우선) |
+| `MIN_ALTERING_VACANT_SLOTS` | `2` | 가공 수련 루프 진입에 필요한 최소 권장 가공 대기열 빈 슬롯 수 |
+
+
 
