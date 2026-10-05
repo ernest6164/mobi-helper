@@ -76,7 +76,7 @@ def split_into_chunks(text, max_len=50):
     return chunks
 
 
-def send_single_chat(cli_path, msg, max_retries=4):
+def send_single_chat(cli_path, msg, data_dir=None, max_retries=4):
     b64_str = base64.b64encode(msg.encode("utf-8")).decode("ascii")
     arg = f"base64:{b64_str}"
 
@@ -90,6 +90,12 @@ def send_single_chat(cli_path, msg, max_retries=4):
         )
         try:
             data = json.loads(res.stdout)
+            if data_dir:
+                resp_dir = os.path.join(data_dir, "response")
+                os.makedirs(resp_dir, exist_ok=True)
+                with open(os.path.join(resp_dir, "write_chat.json"), "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+
             if data.get("error") == "rate_limited":
                 wait_t = float(data.get("retryAfterSeconds", 2)) + 0.5
                 print(f"[*] 레이트 리밋 발생. {wait_t:.1f}초 대기 후 재시도...")
@@ -141,7 +147,7 @@ def main():
     print(f"[*] 총 {len(final_chunks)}개의 채팅 메시지를 순차 전송합니다.")
     all_success = True
     for i, chunk in enumerate(final_chunks):
-        success = send_single_chat(cli_path, chunk)
+        success = send_single_chat(cli_path, chunk, data_dir=data_dir)
         if not success:
             all_success = False
             break
