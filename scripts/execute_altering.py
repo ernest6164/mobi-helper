@@ -330,6 +330,7 @@ def register_alterable_works(cli_path, data_dir, shortages, max_facility_slots=7
 
 def main():
     parser = argparse.ArgumentParser(description="마비노기 모바일 일괄 가공 단발성 자동화 스크립트 (⚠️ 시험적 기능)")
+    parser.add_argument("--char-name", default=None, help="현재 캐릭터명 (미지정 시 environments.json 참조)")
     parser.add_argument("--data-dir", default="data", help="데이터 디렉토리 경로")
     parser.add_argument("--cli-path", default=None, help="MabinogiMobile_CLI.exe 경로")
     parser.add_argument("--target-file", default=None, help="목표치 파일 경로 (기본값: data/target_altering.md)")
@@ -355,7 +356,17 @@ def main():
 
     # 2. 현재 캐릭터 확인
     my_info = run_cli_cmd(cli_path, "get_my_info", data_dir=args.data_dir)
-    char_name = my_info.get("Name") or my_info.get("CharacterName") or my_info.get("character_name") or "알 수 없음"
+    char_name = args.char_name or my_info.get("Name") or my_info.get("CharacterName") or my_info.get("character_name")
+    if not char_name:
+        env_file = os.path.join(args.data_dir, "environments.json")
+        if os.path.exists(env_file):
+            try:
+                with open(env_file, "r", encoding="utf-8") as f:
+                    env_data = json.load(f)
+                    char_name = env_data.get("inGame", {}).get("activeCharacter")
+            except Exception:
+                pass
+    char_name = char_name or "알 수 없음"
     print(f"[+] 현재 활성 캐릭터: {char_name}")
 
     # 3. 목표치 로드
@@ -391,7 +402,19 @@ def main():
     # 7. 신규 가공 의뢰 등록
     all_registered_works = register_alterable_works(cli_path, args.data_dir, shortages)
 
-    # 8. 최종 결과 요약 및 종료
+    # 8. 변동 재고 데이터 동기화 (워크플로우 정합성 유지)
+    if char_name != "알 수 없음":
+        scripts_dir = os.path.dirname(os.path.abspath(__file__))
+        sync_script = os.path.join(scripts_dir, "sync_character.py")
+        if os.path.exists(sync_script):
+            print(f"\n[*] 변동된 가공 재고 반영을 위해 캐릭터({char_name}) 데이터 동기화 실행 중...", flush=True)
+            subprocess.run(
+                [sys.executable, sync_script, "--char-name", char_name, "--cli-path", cli_path, "--data-dir", args.data_dir],
+                capture_output=True, text=True, encoding="utf-8"
+            )
+            print("[+] 데이터 동기화 완료")
+
+    # 9. 최종 결과 요약 및 종료
     print("\n" + "=" * 60)
     print("=== 일괄 가공 단발성 실행 완료 요약 ===")
     print(f"새로 등록된 가공 작업: 총 {len(all_registered_works)}건")

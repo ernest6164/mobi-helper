@@ -98,6 +98,7 @@ flowchart TD
    * `get_inventory`로 무게 잔여량 점검 (권장: 여유 공간 20% 이상).
    * 채집 도구(도끼, 곡괭이, 낫, 가위 등)가 가방에 충분히 구비되어 있는지 사용자에게 확인 안내합니다.
    * 사용자의 최종 진행 승인을 받으면 본격적인 1시간 자동 루프에 진입합니다.
+   * **(파이썬 스크립트 즉시 실행 & 로직 동기화 원칙)**: 사전 승인이 완료되고 Python 가상환경(`.venv`)이 갖추어져 있는 경우, 수동 반복 제어 대신 표준 스크립트([`scripts/execute_life_leveling.py`](../../scripts/README.md#6-executelifelevelingpy-1시간-생활-스킬-집중-육성-순환-루프-️-시험적-기능))를 바로 실행합니다 (`.venv\Scripts\python.exe scripts/execute_life_leveling.py --confirm --focus-skill <분야>`). 워크플로우 문서의 순환 로직과 파이썬 스크립트는 항상 1:1 정합성 및 sync를 유지합니다.
 
 ---
 

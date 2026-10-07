@@ -18,10 +18,10 @@ flowchart TD
     ApplyTemplate --> CurrentStock
     SuggestTemplate -- "템플릿 거절" --> AskCustomTarget["구체적 목표치 입력 요청"]
     AskCustomTarget --> CurrentStock
-    CurrentStock --> CheckOtherChars["5. 타 캐릭터 재고 확인 (10개 이상 기준)"]
-    CheckOtherChars --> DecideGather{"6. 실제 부족 수량 존재 여부"}
-    DecideGather -- "부족 없음 (타 캐릭터 보유)" --> HoldItem["채집 보류 및 잔여 재고 기록"]
-    DecideGather -- "실제 부족분 발생" --> PrioritySort["7. 우선순위 결정 (target_gathering.md 아래쪽 우선)"]
+    CurrentStock --> CheckOtherChars["5. 타 캐릭터 재고 및 신선도 확인"]
+    CheckOtherChars --> DecideGather{"6. 실제 부족 수량 존재 여부<br>(오래된 데이터는 보류 제외)"}
+    DecideGather -- "부족 없음 (최신 타캐릭 보유)" --> HoldItem["채집 보류 및 잔여 재고 기록"]
+    DecideGather -- "실제 부족분 발생 (미보유/오래됨)" --> PrioritySort["7. 우선순위 결정 (target_gathering.md 아래쪽 우선)"]
     PrioritySort --> CheckToolSkill{"8. 생활 레벨 & 도구 보유 사전 점검 (get_gatherable_items)"}
     CheckToolSkill -- "레벨 부족 / 도구 없음" --> NotifyUser["사용자에게 도구 준비/레벨 부족 알림 및 스킵"]
     CheckToolSkill -- "채집 가능" --> CheckWeight{"9. 인벤토리 무게 점검 (get_inventory)"}
@@ -37,8 +37,9 @@ flowchart TD
 
 ## 2. 세부 실행 절차
 
-0. **관리 대상 한정**:
+0. **관리 대상 및 파이썬 스크립트 즉시 실행 원칙**:
    * 재고 관리 대상은 채집(Gathering)을 통해 획득할 수 있는 아이템으로 한정합니다.
+   * **(파이썬 스크립트 즉시 실행 & 로직 동기화)**: Python 가상환경(`.venv`)이 갖추어져 있는 경우, 단계별 수동 CLI 호출 대신 표준 스크립트([`scripts/calculate_stock.py`](../../scripts/README.md#3-calculatestockpy-재고-집계-및-부족분-산출) 및 [`scripts/execute_gathering.py`](../../scripts/README.md#4-executegatheringpy-자동-채집-루프-및-실시간-모니터링))를 바로 실행합니다. 워크플로우 문서와 파이썬 스크립트의 로직은 항상 완전한 sync(정합성)를 유지합니다.
 1. **작업 시작 및 연결 확인**:
    * `MabinogiMobile_CLI status`로 인게임 연결을 확인합니다.
 2. **목표치 점검**:
@@ -50,11 +51,13 @@ flowchart TD
 3. **기준 캐릭터 지정 및 재고 파악**:
    * 재고 판단의 기준은 **'현재 접속한 캐릭터'**입니다.
    * 현재 캐릭터의 인벤토리(`_inventory.csv`) 및 개인 금고(`_bank.csv`), 공용 금고(`_bank_all.csv`)를 합산하여 현재 수량을 파악합니다.
-4. **타 캐릭터 재고 확인**:
+4. **타 캐릭터 재고 확인 및 데이터 신선도 점검**:
    * 현재 캐릭터의 재고가 목표치에 미달하는 경우, `data/characters/`에 저장된 다른 캐릭터들의 CSV 데이터를 조회하여 해당 아이템을 보유하고 있는지 확인합니다.
+   * **(데이터 신선도 점검)**: 저장된 다른 캐릭터의 상태(`최종 갱신 일시`)가 너무 오래된 경우(기본 3일 초과 등 `OTHER_CHAR_STALE_DAYS` 만료 시), 재고 확인 보고서에는 참고로만 표기하고 채집 시 부족분 계산에는 반영하지 않습니다.
 5. **채집 보류 판단 (`OTHER_CHAR_STOCK_THRESHOLD`=10개 기준)**:
-   * 다른 캐릭터에 재고가 **10개 이상** 존재하는 경우 해당 아이템의 채집을 보류합니다.
-   * **(예외 규칙)**: 다른 캐릭터가 가진 수량이 **10개 미만**인 경우는 실질적인 재고로 보지 않고 무시하여 채집 대상에 포함합니다.
+   * **최신 상태(유효한)**인 다른 캐릭터에 재고가 **10개 이상** 존재하는 경우에만 해당 아이템의 채집을 보류합니다.
+   * **(예외 규칙 1 - 수량 미달)**: 다른 캐릭터가 가진 수량이 **10개 미만**인 경우는 실질적인 재고로 보지 않고 무시하여 채집 대상에 포함합니다.
+   * **(예외 규칙 2 - 데이터 만료)**: 다른 캐릭터가 10개 이상 보유하고 있더라도 데이터가 너무 오래된 경우, 재고 확인 시 참고용으로만 표기하고 채집 부족분 계산/보류에는 반영하지 않으며 즉시 채집 대상(부족분)으로 산출합니다.
 6. **우선순위 배정 (`TARGET_PRIORITY_RULE`)**:
    * `data/target_gathering.md` 목록에서 **아래쪽에 위치한 항목일수록 높은 우선순위**를 가집니다.
    * 여러 아이템이 부족할 경우, 목록의 아래쪽 아이템부터 순서대로 채집 계획을 수립합니다.

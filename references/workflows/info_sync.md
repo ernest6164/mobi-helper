@@ -34,6 +34,9 @@ flowchart TD
 
 ## 2. 세부 실행 절차
 
+0. **파이썬 스크립트 즉시 실행 및 로직 동기화 원칙**:
+   * Python 가상환경(`.venv`)이 갖추어져 있는 경우, 캐릭터명이 확인되면 단계별 수동 CLI 호출 대신 표준 스크립트([`scripts/sync_character.py`](../../scripts/README.md#1-synccharacterpy-캐릭터-전체-상태-및-데이터-동기화))를 바로 실행합니다 (`.venv\Scripts\python.exe scripts/sync_character.py --char-name <캐릭터명>`).
+   * 워크플로우 문서의 절차와 파이썬 스크립트의 로직은 항상 완전한 sync(정합성)를 유지합니다.
 1. **CLI 경로 및 연결 상태 점검**:
    * `data/environments.json`의 `paths.cli` 확인 후 없으면 로컬 탐색하여 기록합니다.
    * `MabinogiMobile_CLI status`를 실행하여 `{"pipe":"connected"}` 상태인지 확인합니다.

@@ -35,6 +35,7 @@
   },
   "stockSettings": {
     "otherCharStockThreshold": 10,
+    "otherCharStaleDays": 3,
     "priorityOrder": "bottom-up"
   }
 }
@@ -76,6 +77,7 @@
 | 필드명 | 타입 | 기본 예시값 | 설명 |
 | :--- | :---: | :--- | :--- |
 | `otherCharStockThreshold` | `number` | `10` | 타 캐릭터 보유 시 채집 보류 판정 임계치 (개) |
+| `otherCharStaleDays` | `number` | `3` | 타 캐릭터 데이터 유효 기간 (일). 초과 시 참고용으로만 표시하고 채집 부족분 계산/보류에는 미반영 |
 | `priorityOrder` | `string` | `"bottom-up"` | 목표치 문서(`target_*.md`) 우선순위 정렬 방식 (`bottom-up` / `top-down`) |
 
 ---

@@ -57,30 +57,67 @@ def resolve_cli_path(cli_path_arg, data_dir):
     )
 
 
-def run_cli_cmd(cli_path, cmd, body=None):
+def run_cli_cmd(cli_path, cmd, body=None, data_dir=None):
     args = [cli_path, cmd]
-    if body:
+    if body is not None:
         payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
         b64 = base64.b64encode(payload).decode("ascii")
         args.append(f"base64:{b64}")
     res = subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
+    
+    parsed = None
     if res.stdout and res.stdout.strip():
         try:
-            return json.loads(res.stdout)
+            parsed = json.loads(res.stdout)
         except Exception:
             pass
-    resp_path = os.path.expandvars(r"%LOCALAPPDATA%\MabinogiMobileCLI\last-response.json")
-    if os.path.exists(resp_path):
+            
+    if parsed is None:
+        resp_path = os.path.expandvars(r"%LOCALAPPDATA%\MabinogiMobileCLI\last-response.json")
+        if os.path.exists(resp_path):
+            try:
+                with open(resp_path, "r", encoding="utf-8") as f:
+                    parsed = json.load(f)
+            except Exception:
+                pass
+
+    if data_dir and parsed is not None:
+        resp_dir = os.path.join(data_dir, "response")
+        os.makedirs(resp_dir, exist_ok=True)
+        resp_file = os.path.join(resp_dir, f"{cmd}.json")
         try:
-            with open(resp_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+            with open(resp_file, "w", encoding="utf-8") as f:
+                json.dump(parsed, f, ensure_ascii=False, indent=2)
         except Exception:
             pass
-    return {}
+
+    return parsed or {}
 
 
-def get_current_items(cli_path):
-    res = run_cli_cmd(cli_path, "get_items")
+def send_chat_message(cli_path, message, data_dir=None):
+    b64_str = base64.b64encode(message.encode("utf-8")).decode("ascii")
+    arg = f"base64:{b64_str}"
+    res = subprocess.run([cli_path, "write_chat", arg], capture_output=True, text=True, encoding="utf-8")
+    parsed = None
+    if res.stdout and res.stdout.strip():
+        try:
+            parsed = json.loads(res.stdout)
+        except Exception:
+            pass
+    if data_dir and parsed is not None:
+        resp_dir = os.path.join(data_dir, "response")
+        os.makedirs(resp_dir, exist_ok=True)
+        resp_file = os.path.join(resp_dir, "write_chat.json")
+        try:
+            with open(resp_file, "w", encoding="utf-8") as f:
+                json.dump(parsed, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+    return parsed or {}
+
+
+def get_current_items(cli_path, data_dir=None):
+    res = run_cli_cmd(cli_path, "get_items", data_dir=data_dir)
     if isinstance(res, list):
         return res
     if isinstance(res, dict) and "items" in res:
@@ -88,16 +125,16 @@ def get_current_items(cli_path):
     return []
 
 
-def get_inventory_weight(cli_path):
-    return run_cli_cmd(cli_path, "get_inventory")
+def get_inventory_weight(cli_path, data_dir=None):
+    return run_cli_cmd(cli_path, "get_inventory", data_dir=data_dir)
 
 
-def get_activity_status(cli_path):
-    return run_cli_cmd(cli_path, "get_activity")
+def get_activity_status(cli_path, data_dir=None):
+    return run_cli_cmd(cli_path, "get_activity", data_dir=data_dir)
 
 
-def get_gatherable_list(cli_path):
-    res = run_cli_cmd(cli_path, "get_gatherable_items")
+def get_gatherable_list(cli_path, data_dir=None):
+    res = run_cli_cmd(cli_path, "get_gatherable_items", data_dir=data_dir)
     if isinstance(res, list):
         return res
     if isinstance(res, dict) and "items" in res:
@@ -121,6 +158,68 @@ def parse_targets(target_file_path):
     return targets
 
 
+def get_character_update_info(data_dir, server_name, char_name):
+    """
+    캐릭터의 최종 갱신 일시를 파싱하여 datetime 객체 및 일시 문자열 반환.
+    우선순위:
+    1. data/characters/(서버)_(캐릭터).md 내 '**최종 갱신 일시**'
+    2. data/characters/README.md 표 내 해당 캐릭터 행의 최종 갱신 일시
+    3. 인벤토리 CSV 파일의 수정 시각 (mtime)
+    """
+    char_dir = os.path.join(data_dir, "characters")
+    if not os.path.exists(char_dir):
+        char_dir = data_dir
+
+    md_candidates = [
+        os.path.join(char_dir, f"{server_name}_{char_name}.md"),
+        os.path.join(char_dir, f"{char_name}.md"),
+    ]
+    for f in glob.glob(os.path.join(char_dir, "*.md")):
+        fname = os.path.basename(f).lower()
+        if fname in [f"{server_name.lower()}_{char_name.lower()}.md", f"{char_name.lower()}.md"]:
+            if f not in md_candidates:
+                md_candidates.insert(0, f)
+
+    for md_path in md_candidates:
+        if os.path.exists(md_path):
+            try:
+                with open(md_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                m = re.search(r"\*\*최종 갱신 일시\*\*:\s*([0-9]{4}-[0-9]{2}-[0-9]{2}(?:\s+[0-9]{2}:[0-9]{2}(?::[0-9]{2})?)?)", content)
+                if m:
+                    date_str = m.group(1).strip()
+                    fmt = "%Y-%m-%d %H:%M" if " " in date_str else "%Y-%m-%d"
+                    return datetime.datetime.strptime(date_str, fmt), date_str
+            except Exception:
+                pass
+
+    readme_path = os.path.join(char_dir, "README.md")
+    if os.path.exists(readme_path):
+        try:
+            with open(readme_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    if "|" in line:
+                        parts = [p.strip() for p in line.split("|") if p.strip()]
+                        if len(parts) >= 7 and parts[0].strip().lower() == char_name.lower():
+                            date_str = parts[6].strip()
+                            fmt = "%Y-%m-%d %H:%M" if " " in date_str else "%Y-%m-%d"
+                            return datetime.datetime.strptime(date_str, fmt), date_str
+        except Exception:
+            pass
+
+    csv_candidates = [
+        os.path.join(char_dir, f"{server_name}_{char_name}_inventory.csv"),
+        os.path.join(char_dir, f"{char_name}_inventory.csv"),
+    ]
+    for c in csv_candidates:
+        if os.path.exists(c):
+            mtime = os.path.getmtime(c)
+            dt = datetime.datetime.fromtimestamp(mtime)
+            return dt, dt.strftime("%Y-%m-%d %H:%M")
+
+    return None, None
+
+
 def load_other_character_stocks(data_dir, current_char, server_name):
     char_dir = os.path.join(data_dir, "characters")
     if not os.path.exists(char_dir):
@@ -135,12 +234,12 @@ def load_other_character_stocks(data_dir, current_char, server_name):
         fname = os.path.basename(csv_file)
         if "bank_all" in fname:
             continue
-        match = re.search(rf"{server_name}_(.*?)\_(inventory|bank)\.csv", fname)
+        match = re.search(rf"{server_name}_(.*?)\_(inventory|bank)\.csv", fname, re.IGNORECASE)
         if not match:
-            match = re.search(r"(.*?)_(inventory|bank)\.csv", fname)
+            match = re.search(r"(.*?)_(inventory|bank)\.csv", fname, re.IGNORECASE)
         if match:
-            cname = match.group(1)
-            if cname == current_char:
+            cname = match.group(1).strip()
+            if cname.lower() == current_char.lower():
                 continue
             if cname not in other_stocks:
                 other_stocks[cname] = {}
@@ -154,9 +253,22 @@ def load_other_character_stocks(data_dir, current_char, server_name):
     return other_stocks
 
 
-def stop_action(cli_path):
+def stop_action(cli_path, data_dir=None):
     print("[*] 채집 중단 명령(stop_action) 전송...", flush=True)
-    return run_cli_cmd(cli_path, "stop_action")
+    return run_cli_cmd(cli_path, "stop_action", data_dir=data_dir)
+
+
+def check_custom_chat_rule(data_dir):
+    custom_rule_file = os.path.join(data_dir, "workflows_custom.md")
+    if os.path.exists(custom_rule_file):
+        try:
+            with open(custom_rule_file, "r", encoding="utf-8") as f:
+                content = f.read()
+                if "채집 전" in content and "채팅으로 입력한다" in content:
+                    return True
+        except Exception:
+            pass
+    return False
 
 
 def sync_after_gathering(cli_path, data_dir, char_name, server_name):
@@ -165,7 +277,7 @@ def sync_after_gathering(cli_path, data_dir, char_name, server_name):
     char_dir = os.path.join(data_dir, "characters")
     os.makedirs(char_dir, exist_ok=True)
 
-    items_data = get_current_items(cli_path)
+    items_data = get_current_items(cli_path, data_dir=data_dir)
     inv, bank, bank_all = [], [], []
     for it in items_data:
         loc = it.get("Location")
@@ -208,8 +320,8 @@ def sync_after_gathering(cli_path, data_dir, char_name, server_name):
             f.write(c)
 
 
-def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_file, single_item=None, single_count=None, threshold=10, max_rounds=0):
-    status = run_cli_cmd(cli_path, "status")
+def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_file, single_item=None, single_count=None, threshold=10, stale_days=3.0, max_rounds=0):
+    status = run_cli_cmd(cli_path, "status", data_dir=data_dir)
     if status.get("pipe") != "connected":
         print(f"[오류] CLI 커넥터 연결 상태가 아닙니다: {status}", file=sys.stderr)
         return False
@@ -218,10 +330,16 @@ def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_fi
     print(f"=== 마비노기 모바일 자동 채집 시스템 시작 ===")
     print(f"* 캐릭터: [{char_name}] (서버: {server_name})")
     print(f"* 타 캐릭터 보류 임계값: {threshold}개 이상")
+    print(f"* 타 캐릭터 데이터 만료 기준: {stale_days}일 초과 시 참고용 표기 및 보류 제외")
     print("=" * 70)
 
+    # Check custom workflow rules
+    has_chat_rule = check_custom_chat_rule(data_dir)
+    if has_chat_rule:
+        print("[*] 사용자 특수 규칙(workflows_custom.md) 적용: 채집 전 인게임 채팅 안내 활성화")
+
     # Check gatherable items capabilities
-    gatherable = get_gatherable_list(cli_path)
+    gatherable = get_gatherable_list(cli_path, data_dir=data_dir)
     gatherable_names = set()
     for g in gatherable:
         if isinstance(g, dict):
@@ -235,6 +353,28 @@ def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_fi
         targets = parse_targets(target_file)
 
     other_stocks = load_other_character_stocks(data_dir, char_name, server_name)
+
+    # 타 캐릭터 데이터 신선도 점검
+    now = datetime.datetime.now()
+    char_stale_info = {}
+    for c in other_stocks:
+        dt, dt_str = get_character_update_info(data_dir, server_name, c)
+        if dt:
+            diff_days = (now - dt).total_seconds() / 86400.0
+            is_stale = (diff_days > stale_days)
+            char_stale_info[c] = {
+                "is_stale": is_stale,
+                "days": diff_days,
+                "date_str": dt_str
+            }
+        else:
+            char_stale_info[c] = {
+                "is_stale": True,
+                "days": 999.0,
+                "date_str": "알 수 없음"
+            }
+
+    held_by_others_report = {}
     session_gained = {}
     blocked_retries = {}
     rounds = 0
@@ -245,7 +385,7 @@ def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_fi
             break
 
         # 1. Check current items
-        curr_items = get_current_items(cli_path)
+        curr_items = get_current_items(cli_path, data_dir=data_dir)
         curr_stock = {}
         for it in curr_items:
             n = it.get("DisplayName")
@@ -262,12 +402,20 @@ def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_fi
             if deficit <= 0:
                 continue
 
-            # Check other character stock
+            # Check other character stock (오래된 데이터는 참고용일 뿐, 보류 판정에서 제외)
             held_by_others = False
             for cname, cstock in other_stocks.items():
-                if cstock.get(name, 0) >= threshold:
-                    held_by_others = True
-                    break
+                cnt = cstock.get(name, 0)
+                if cnt >= threshold:
+                    s_info = char_stale_info.get(cname, {"is_stale": False, "days": 0.0})
+                    if s_info["is_stale"]:
+                        days_int = int(s_info["days"])
+                        print(f"    [참고] 타 캐릭터({cname})에 [{name}] {cnt}개 보유 기록이 있으나 데이터가 오래되어({days_int}일 전) 부족분 계산에서 제외하고 채집 대상에 유지합니다.")
+                        held_by_others_report[name] = f"{cname} ({cnt}개 보유) [참고: 오래됨({days_int}일 전)]"
+                    else:
+                        held_by_others = True
+                        held_by_others_report[name] = f"{cname} ({cnt}개 보유)"
+                        break
             if held_by_others:
                 continue
 
@@ -289,7 +437,7 @@ def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_fi
         print(f"\n>>> [라운드 {rounds}] 채집 목표: [{next_target}] | 현재: {curr_cnt} / 목표: {t_cnt} (부족분: {deficit}개)")
 
         # 3. Check inventory weight
-        inv_w = get_inventory_weight(cli_path)
+        inv_w = get_inventory_weight(cli_path, data_dir=data_dir)
         if inv_w:
             cur_w = inv_w.get("CurrentInventoryWeightAsDecimal", 0)
             max_w = inv_w.get("MaxInventoryWeightAsDecimal", 2090)
@@ -298,11 +446,19 @@ def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_fi
                 print("\n[경고] 인벤토리 무게가 한계(98%)에 도달했습니다. 채집을 안전하게 중단합니다.")
                 break
 
+        # 3-1. Apply Custom Chat Rule (workflows_custom.md)
+        if has_chat_rule:
+            chat_text = f"{next_target} {deficit}개를 채집합니다."
+            print(f"    [*] 인게임 채팅 입력: \"{chat_text}\"", flush=True)
+            send_chat_message(cli_path, chat_text, data_dir=data_dir)
+            time.sleep(2.5)
+
         # 4. Start gathering in background thread
         gather_res = [None]
+        target_reached = [False]
 
         def do_gather():
-            res = run_cli_cmd(cli_path, "execute_gathering", {"displayName": next_target})
+            res = run_cli_cmd(cli_path, "execute_gathering", {"displayName": next_target}, data_dir=data_dir)
             gather_res[0] = res
 
         g_thread = threading.Thread(target=do_gather)
@@ -311,63 +467,66 @@ def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_fi
         # 5. Monitor in real time
         while g_thread.is_alive():
             time.sleep(2.5)
-            c_items = get_current_items(cli_path)
+            c_items = get_current_items(cli_path, data_dir=data_dir)
             c_cnt = sum(it.get("Count", 0) for it in c_items if it.get("DisplayName") == next_target)
 
             if c_cnt >= t_cnt:
-                print(f"    [목표 도달] {next_target}: {c_cnt} >= {t_cnt}. 채집 중단 중...")
-                stop_action(cli_path)
+                print(f"    [목표 도달] {next_target}: {c_cnt} >= {t_cnt}. 채집 중단 중...", flush=True)
+                target_reached[0] = True
+                stop_action(cli_path, data_dir=data_dir)
                 break
 
         g_thread.join()
 
         # 6. Check auto-play status
-        act = get_activity_status(cli_path)
+        act = get_activity_status(cli_path, data_dir=data_dir)
         if act and act.get("IsAutoPlaying"):
-            print(f"    인게임 자동 채집 진행 중. 실시간 진행도 모니터링 중...")
+            print(f"    인게임 자동 채집 진행 중. 실시간 진행도 모니터링 중...", flush=True)
             while True:
                 time.sleep(3.0)
-                c_items = get_current_items(cli_path)
+                c_items = get_current_items(cli_path, data_dir=data_dir)
                 c_cnt = sum(it.get("Count", 0) for it in c_items if it.get("DisplayName") == next_target)
 
-                act = get_activity_status(cli_path)
+                act = get_activity_status(cli_path, data_dir=data_dir)
                 is_auto = act.get("IsAutoPlaying") if act else False
 
                 if c_cnt >= t_cnt:
-                    print(f"    [목표 도달] {next_target}: {c_cnt} >= {t_cnt}. 자동 진행 중단 중...")
-                    stop_action(cli_path)
+                    print(f"    [목표 도달] {next_target}: {c_cnt} >= {t_cnt}. 자동 진행 중단 중...", flush=True)
+                    target_reached[0] = True
+                    stop_action(cli_path, data_dir=data_dir)
                     break
                 if not is_auto:
-                    print(f"    인게임 채집 동작 완료. 현재 수량: {c_cnt}/{t_cnt}")
+                    print(f"    인게임 채집 동작 완료. 현재 수량: {c_cnt}/{t_cnt}", flush=True)
                     break
 
         # 7. Evaluate round result
-        post_items = get_current_items(cli_path)
+        post_items = get_current_items(cli_path, data_dir=data_dir)
         post_cnt = sum(it.get("Count", 0) for it in post_items if it.get("DisplayName") == next_target)
         gained = post_cnt - curr_cnt
 
         if gained > 0:
             session_gained[next_target] = session_gained.get(next_target, 0) + gained
             blocked_retries[next_target] = 0
-            print(f"    [+] {next_target} 라운드 완료: +{gained}개 획득 (현재 {post_cnt}/{t_cnt})")
+            print(f"    [+] {next_target} 라운드 완료: +{gained}개 획득 (현재 {post_cnt}/{t_cnt})", flush=True)
         else:
-            print(f"    [-] 획득량 없음 (0개). 응답: {gather_res[0]}")
+            print(f"    [-] 획득량 없음 (0개). 응답: {gather_res[0]}", flush=True)
 
-        # 8. Check error & retry on modal block
-        resp = gather_res[0]
-        if isinstance(resp, dict) and "error" in resp:
-            err = resp["error"]
-            if err == "blocked":
-                blocked_retries[next_target] = blocked_retries.get(next_target, 0) + 1
-                if blocked_retries[next_target] > 3:
-                    print(f"\n[오류] 모달 창 방해 지속으로 {next_target} 채집을 중단합니다.", file=sys.stderr)
+        # 8. Check error & retry on modal block only if target was not reached
+        if not target_reached[0]:
+            resp = gather_res[0]
+            if isinstance(resp, dict) and "error" in resp:
+                err = resp["error"]
+                if err == "blocked":
+                    blocked_retries[next_target] = blocked_retries.get(next_target, 0) + 1
+                    if blocked_retries[next_target] > 3:
+                        print(f"\n[오류] 모달 창 방해 지속으로 {next_target} 채집을 중단합니다.", file=sys.stderr)
+                        break
+                    else:
+                        print(f"    일시적 모달 방해 발생. 3초 후 재시도 ({blocked_retries[next_target]}/3)...", flush=True)
+                        time.sleep(3)
+                elif err in ["overweight", "tool_missing", "tool_broken", "not_enough_currency"]:
+                    print(f"\n[오류] 채집 중단 에러 발생: {err}", file=sys.stderr)
                     break
-                else:
-                    print(f"    일시적 모달 방해 발생. 3초 후 재시도 ({blocked_retries[next_target]}/3)...")
-                    time.sleep(3)
-            elif err in ["overweight", "tool_missing", "tool_broken", "not_enough_currency"]:
-                print(f"\n[오류] 채집 중단 에러 발생: {err}", file=sys.stderr)
-                break
 
         time.sleep(1)
 
@@ -377,10 +536,17 @@ def execute_auto_gathering(char_name, server_name, cli_path, data_dir, target_fi
     print("\n" + "=" * 50)
     print("=== 채집 세션 최종 결과 보고 ===")
     print("=" * 50)
+    print("[1] 이번 세션 신규 채집 내역:")
     for k, v in session_gained.items():
         print(f"  * {k}: +{v}개 채집 완료")
     if not session_gained:
         print("  * 신규 채집된 내역이 없습니다.")
+
+    print("\n[2] 타 캐릭터 보유로 채집 보류된 품목 (임계값 10개 이상):")
+    for k, v in held_by_others_report.items():
+        print(f"  * {k}: {v}")
+    if not held_by_others_report:
+        print("  * 타 캐릭터 보유로 보류된 품목이 없습니다.")
     print("=" * 50)
     return True
 
@@ -392,6 +558,7 @@ def main():
     default_char = "Saki"
     default_server = "던컨"
     default_threshold = 10
+    default_stale_days = 3.0
 
     if os.path.exists(env_file):
         try:
@@ -400,6 +567,7 @@ def main():
                 default_char = env_data.get("inGame", {}).get("activeCharacter", default_char)
                 default_server = env_data.get("inGame", {}).get("defaultServer", default_server)
                 default_threshold = env_data.get("stockSettings", {}).get("otherCharStockThreshold", default_threshold)
+                default_stale_days = float(env_data.get("stockSettings", {}).get("otherCharStaleDays", default_stale_days))
         except Exception:
             pass
 
@@ -412,6 +580,7 @@ def main():
     parser.add_argument("--single-item", default=None, help="단일 품목만 채집할 경우 아이템명")
     parser.add_argument("--single-count", type=int, default=None, help="단일 품목 목표 수량")
     parser.add_argument("--threshold", type=int, default=default_threshold, help=f"타 캐릭터 보유 보류 임계값 (기본값: {default_threshold})")
+    parser.add_argument("--stale-days", type=float, default=default_stale_days, help=f"타 캐릭터 데이터 만료 일수 (기본값: {default_stale_days}일)")
     parser.add_argument("--max-rounds", type=int, default=0, help="최대 채집 라운드 수 (0: 제한 없음)")
 
     args = parser.parse_args()
@@ -432,6 +601,7 @@ def main():
         single_item=args.single_item,
         single_count=args.single_count,
         threshold=args.threshold,
+        stale_days=args.stale_days,
         max_rounds=args.max_rounds
     )
 

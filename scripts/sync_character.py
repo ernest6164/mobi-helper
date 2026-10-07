@@ -45,7 +45,7 @@ def resolve_cli_path(cli_path_arg, data_dir):
     )
 
 
-def run_cli_command(cli_path, command_name, *args):
+def run_cli_command(cli_path, command_name, *args, data_dir=None):
     cmd = [cli_path, command_name] + list(args)
     res = subprocess.run(
         cmd,
@@ -54,10 +54,26 @@ def run_cli_command(cli_path, command_name, *args):
         text=True,
         encoding="utf-8"
     )
+    parsed = {}
     try:
-        return json.loads(res.stdout)
+        parsed = json.loads(res.stdout)
     except Exception:
-        return {}
+        pass
+
+    if data_dir:
+        resp_dir = os.path.join(data_dir, "response")
+        os.makedirs(resp_dir, exist_ok=True)
+        resp_file = os.path.join(resp_dir, f"{command_name}.json")
+        try:
+            with open(resp_file, "w", encoding="utf-8") as f:
+                if parsed:
+                    json.dump(parsed, f, ensure_ascii=False, indent=2)
+                else:
+                    f.write(res.stdout or "")
+        except Exception:
+            pass
+
+    return parsed
 
 
 def clean_html(text):
@@ -71,18 +87,18 @@ def sync_character(char_name, cli_path, data_dir):
     os.makedirs(char_dir, exist_ok=True)
 
     # 1. 상태 및 데이터 조회
-    status = run_cli_command(cli_path, "status")
+    status = run_cli_command(cli_path, "status", data_dir=data_dir)
     if status.get("pipe") != "connected":
         print(f"[오류] CLI 커넥터 연결 상태가 아닙니다: {status}", file=sys.stderr)
         return False
 
-    env = run_cli_command(cli_path, "get_current_environment")
-    info = run_cli_command(cli_path, "get_my_info")
-    inventory = run_cli_command(cli_path, "get_inventory")
-    items = run_cli_command(cli_path, "get_items")
-    quests = run_cli_command(cli_path, "get_quests")
-    daily_missions = run_cli_command(cli_path, "get_daily_missions")
-    weekly_missions = run_cli_command(cli_path, "get_weekly_missions")
+    env = run_cli_command(cli_path, "get_current_environment", data_dir=data_dir)
+    info = run_cli_command(cli_path, "get_my_info", data_dir=data_dir)
+    inventory = run_cli_command(cli_path, "get_inventory", data_dir=data_dir)
+    items = run_cli_command(cli_path, "get_items", data_dir=data_dir)
+    quests = run_cli_command(cli_path, "get_quests", data_dir=data_dir)
+    daily_missions = run_cli_command(cli_path, "get_daily_missions", data_dir=data_dir)
+    weekly_missions = run_cli_command(cli_path, "get_weekly_missions", data_dir=data_dir)
 
     server_name = info.get("RealmName") or env.get("RealmName") or "던컨"
     now = datetime.datetime.now()
@@ -96,7 +112,7 @@ def sync_character(char_name, cli_path, data_dir):
     bank_csv = os.path.join(char_dir, f"{server_name}_{char_name}_bank.csv")
     bank_all_csv = os.path.join(char_dir, f"{server_name}_bank_all.csv")
 
-    item_list = items if isinstance(items, list) else items.get("Items", [])
+    item_list = items if isinstance(items, list) else (items.get("Items") or items.get("items") or [])
     inv_items, bank_items, bank_all_items = [], [], []
 
     for it in item_list:

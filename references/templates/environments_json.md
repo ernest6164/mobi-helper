@@ -25,6 +25,7 @@
   },
   "stockSettings": {
     "otherCharStockThreshold": 10,
+    "otherCharStaleDays": 3,
     "priorityOrder": "bottom-up"
   }
 }
